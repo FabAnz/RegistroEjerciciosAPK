@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obligatorio</title>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+</head>
+
+<body>
+  <ion-app>
+
+    <!-- Ruteo -->
+    <ion-router id="ruteo" root="/">
+      <ion-route url="/" component="page-home"></ion-route>
+      <ion-route url="/login" component="page-login"></ion-route>
+      <ion-route url="/registroUsuario" component="page-registroUsuario"></ion-route>
+      <ion-route url="/resumen" component="page-resumen"></ion-route>
+      <ion-route url="/nuevoRegistro" component="page-nuevoRegistro"></ion-route>
+      <ion-route url="/listaRegistros" component="page-listaRegistros"></ion-route>
+      <ion-route url="/mapaUsuarios" component="page-mapaUsuarios"></ion-route>
+    </ion-router>
+    <ion-nav id="nav"></ion-nav>
+
+    <!-- Pagina home -->
+    <page-home class="ion-page" id="pageHome"></page-home>
+
+    <!-- Pagina login -->
+    <page-login class="ion-page" id="pageLogin">
+
+      <ion-content>
+        <h1>Hola!</h1>
+
+        <ion-input type="text" label="Usuario" label-placement="floating" fill="outline"
+          placeholder="Nombre de usuario"></ion-input>
+        <ion-input type="password" label="Password" label-placement="floating" fill="outline"
+          placeholder="Ingrese su password"></ion-input>
+        <ion-button expand="block" id="btnLoginIngresar">Ingresar</ion-button>
+
+        <p>¿Aun no tenes cuenta? <span><ion-router-link href="/registroUsuario">Registrate aquí</ion-router-link></span>
+        </p>
+        <p id="pLoginMensaje"></p>
+      </ion-content>
+
+    </page-login>
+
+    <!-- Pagina Registro Usuario -->
+    <page-registroUsuario class="ion-page" id="pageRegistroUsuario">
+
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-back-button default-href="/"></ion-back-button>
+          </ion-buttons>
+          <ion-title>Registro Usuario</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <ion-input id="iRegistroUsuarioUsuario" type="text" label="Usuario" label-placement="floating" fill="outline"
+          placeholder="Nombre de usuario"></ion-input>
+        <ion-input id="iRegistroUsuarioPassword" type="password" label="Password" label-placement="floating" fill="outline"
+          placeholder="Ingrese su password"></ion-input>
+        <ion-select id="slcRegistroUsuarioPais" interface="modal" label="País" label-placement="floating"
+          fill="outline">
+        </ion-select>
+        <ion-button expand="block" id="btnRegistroUsuarioRegistrarme">Registrarme</ion-button>
+        <p id="pRegistroUsuarioMensaje"></p>
+
+      </ion-content>
+
+    </page-registroUsuario>
+
+
+    <!-- Menu -->
+    <ion-tabs id="tabMain">
+
+      <!-- Pagina resumen -->
+      <ion-tab tab="tabResumen">
+        <page-resumen class="ion-page" id="pageResumen">
+
+          <ion-content>
+            Resumen
+          </ion-content>
+
+        </page-resumen>
+      </ion-tab>
+
+      <!-- Pagina nuevo registro -->
+      <ion-tab tab="tabNuevoRegistro">
+        <page-nuevoRegistro class="ion-page" id="pageNuevoRegistro">
+
+          <ion-content>
+            Nuevo registro
+          </ion-content>
+
+        </page-nuevoRegistro>
+      </ion-tab>
+
+      <!-- Pagina lista de registros -->
+      <ion-tab tab="tabListaRegistros">
+        <page-listaRegistros class="ion-page" id="pageListaRegistros">
+
+          <ion-content>
+            Lista de registros
+          </ion-content>
+
+        </page-listaRegistros>
+      </ion-tab>
+
+      <!-- Pagina mapa de usuarios -->
+      <ion-tab tab="tabMapaUsuarios">
+        <page-mapaUsuarios class="ion-page" id="pageMapaUsuarios">
+
+          <ion-content>
+            Mapa de usuarios
+          </ion-content>
+
+        </page-mapaUsuarios>
+      </ion-tab>
+
+      <!-- Botones -->
+      <ion-tab-bar slot="bottom">
+
+        <!-- Resumen -->
+        <ion-tab-button tab="tabResumen" href="/resumen">
+          <ion-icon name="stats-chart"></ion-icon>
+          Resumen
+        </ion-tab-button>
+
+        <!-- Nuevo Registro -->
+        <ion-tab-button tab="tabNuevoRegistro" href="/nuevoRegistro">
+          <ion-icon name="add-circle"></ion-icon>
+          Registro
+        </ion-tab-button>
+
+        <!-- Lista registros -->
+        <ion-tab-button tab="tabListaRegistros" href="/listaRegistros">
+          <ion-icon name="time"></ion-icon>
+          Historial
+        </ion-tab-button>
+
+        <!-- Mapa usuarios -->
+        <ion-tab-button tab="tabMapaUsuarios" href="/mapaUsuarios">
+          <ion-icon name="navigate-circle"></ion-icon>
+          Mapa usuarios
+        </ion-tab-button>
+
+      </ion-tab-bar>
+    </ion-tabs>
+
+  </ion-app>
+
+
+  <script src="js/clases.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>
