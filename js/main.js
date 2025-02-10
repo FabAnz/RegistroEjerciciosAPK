@@ -1,5 +1,5 @@
 //Constantes
-const API_URL = "https://movetrack.develotion.com/"
+const API_URL = "https://movetrack.develotion.com"
 
 //DOM
 const ROUTER = document.querySelector("#ruteo")
@@ -8,7 +8,8 @@ const NAV = document.querySelector("#nav")
 const PANTALLA_HOME = document.querySelector("#pageHome")
 const PANTALLA_LOGIN = document.querySelector("#pageLogin")
 const PANTALLA_REGISTRO_USUARIO = document.querySelector("#pageRegistroUsuario")
-const PANTALLA_PRINCIPAL = document.querySelector("#tabMain")
+const PANTALLA_PRINCIPAL = document.querySelector("#pageApp")
+const MENU_TAB = document.querySelector('#tabMain')
 
 // Inicializaci n del sistema
 inicializar()
@@ -21,13 +22,10 @@ function inicializar() {
 function subscripcionAEventos() {
   // Routeo
   ROUTER.addEventListener("ionRouteDidChange", navegar)
-  //Botones
-  document.querySelector("#btnLoginIngresar").addEventListener("click", btnLoginIngresarHandler)
-  document.querySelector("#btnRegistroUsuarioRegistrarme").addEventListener("click", btnRegistroUsuarioRegistrarmeHandler)
 }
 
 function verificarUsuarioLocalStorage() {
-  const usuarioRecuperado = localStorage.getItem("UsuarioActivoLocalStorage")
+  const usuarioRecuperado = localStorage.getItem("OBDesAPKUsuarioActivo")
   if (usuarioRecuperado)
     sistema.usuarioActivo = JSON.parse(usuarioRecuperado)
 }
@@ -46,7 +44,7 @@ function navegar(e) {
       cargarPaises()
       mostrarRegistroUsuario()
       break
-    case "/resumen":
+    case "/app":
       mostrarPrincipal()
       break
     default:
@@ -57,7 +55,7 @@ function navegar(e) {
 
 function verificarInicio() {
   if (sistema.usuarioActivo) {
-    NAV.setRoot("page-resumen")
+    NAV.setRoot("page-app")
     NAV.popToRoot()
   } else {
     NAV.setRoot("page-login")
@@ -100,22 +98,73 @@ function ocultarPantallas() {
 
 function mostrarLogin() {
   ocultarPantallas()
+  document.querySelector("#iLoginUsuario").value = ''
+  document.querySelector("#iLoginPassword").value = ''
+  document.querySelector('#pLoginMensaje').innerHTML = ''
   PANTALLA_LOGIN.style.display = "block"
 }
 
 function mostrarRegistroUsuario() {
   ocultarPantallas()
+  document.querySelector("#iRegistroUsuarioUsuario").value = ''
+  document.querySelector("#iRegistroUsuarioPassword").value = ''
+  document.querySelector("#slcRegistroUsuarioPais").value = ''
+  document.querySelector('#pRegistroUsuarioMensaje').innerHTML = ''
   PANTALLA_REGISTRO_USUARIO.style.display = "block"
 }
 
 function mostrarPrincipal() {
   ocultarPantallas()
   PANTALLA_PRINCIPAL.style.display = "block"
+  MENU_TAB.select('tabResumen')
 }
 
 //Login
 function btnLoginIngresarHandler() {
-  //TODO Login
+  const usuario = document.querySelector("#iLoginUsuario").value
+  const password = document.querySelector("#iLoginPassword").value
+
+  const usuarioBody = {
+    usuario: usuario,
+    password: password
+  }
+
+  document.querySelector("#pLoginMensaje").innerHTML = ''
+
+  try {
+    if (!usuario || !password)
+      throw new Error("Se deben completar todos los datos")
+
+    fetch(`${API_URL}/login.php`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(usuarioBody) })
+      .then((response) => {
+        if (response.status != 200)
+          document.querySelector("#pRegistroUsuarioMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
+        return response.json()
+      }).then((data) => {
+        if (data.mensaje) {
+          document.querySelector("#pLoginMensaje").innerHTML = data.mensaje
+        } else {
+          NAV.setRoot('page-app')
+          NAV.popToRoot()
+          sistema.usuarioActivo = data
+          localStorage.setItem('OBDesAPKUsuarioActivo', JSON.stringify(data))
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+
+  } catch (error) {
+    document.querySelector("#pLoginMensaje").innerHTML = error
+  }
+}
+
+//Logout
+function btnLogoutHandler() {
+  localStorage.clear()
+  sistema.usuarioActivo = null
+  NAV.setRoot('page-login')
+  NAV.popToRoot()
+  mostrarLogin()
 }
 
 //Registro de usuario

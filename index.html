@@ -18,10 +18,7 @@
       <ion-route url="/" component="page-home"></ion-route>
       <ion-route url="/login" component="page-login"></ion-route>
       <ion-route url="/registroUsuario" component="page-registroUsuario"></ion-route>
-      <ion-route url="/resumen" component="page-resumen"></ion-route>
-      <ion-route url="/nuevoRegistro" component="page-nuevoRegistro"></ion-route>
-      <ion-route url="/listaRegistros" component="page-listaRegistros"></ion-route>
-      <ion-route url="/mapaUsuarios" component="page-mapaUsuarios"></ion-route>
+      <ion-route url="/app" component="page-app"></ion-route>
     </ion-router>
     <ion-nav id="nav"></ion-nav>
 
@@ -34,11 +31,11 @@
       <ion-content>
         <h1>Hola!</h1>
 
-        <ion-input type="text" label="Usuario" label-placement="floating" fill="outline"
+        <ion-input id="iLoginUsuario" type="text" label="Usuario" label-placement="floating" fill="outline"
           placeholder="Nombre de usuario"></ion-input>
-        <ion-input type="password" label="Password" label-placement="floating" fill="outline"
+        <ion-input id="iLoginPassword" type="password" label="Password" label-placement="floating" fill="outline"
           placeholder="Ingrese su password"></ion-input>
-        <ion-button expand="block" id="btnLoginIngresar">Ingresar</ion-button>
+        <ion-button onclick="btnLoginIngresarHandler()" expand="block">Ingresar</ion-button>
 
         <p>¿Aun no tenes cuenta? <span><ion-router-link href="/registroUsuario">Registrate aquí</ion-router-link></span>
         </p>
@@ -62,95 +59,85 @@
       <ion-content>
         <ion-input id="iRegistroUsuarioUsuario" type="text" label="Usuario" label-placement="floating" fill="outline"
           placeholder="Nombre de usuario"></ion-input>
-        <ion-input id="iRegistroUsuarioPassword" type="password" label="Password" label-placement="floating" fill="outline"
-          placeholder="Ingrese su password"></ion-input>
+        <ion-input id="iRegistroUsuarioPassword" type="password" label="Password" label-placement="floating"
+          fill="outline" placeholder="Ingrese su password"></ion-input>
         <ion-select id="slcRegistroUsuarioPais" interface="modal" label="País" label-placement="floating"
           fill="outline">
         </ion-select>
-        <ion-button expand="block" id="btnRegistroUsuarioRegistrarme">Registrarme</ion-button>
+        <ion-button onclick="btnRegistroUsuarioRegistrarmeHandler()" expand="block">Registrarme</ion-button>
         <p id="pRegistroUsuarioMensaje"></p>
 
       </ion-content>
 
     </page-registroUsuario>
 
+    <!-- Pagina principal -->
+    <page-app class="ion-page" id="pageApp">
+      <!-- Menu -->
+      <ion-tabs id="tabMain">
 
-    <!-- Menu -->
-    <ion-tabs id="tabMain">
-
-      <!-- Pagina resumen -->
-      <ion-tab tab="tabResumen">
-        <page-resumen class="ion-page" id="pageResumen">
-
+        <!-- Tab resumen -->
+        <ion-tab tab="tabResumen">
           <ion-content>
-            Resumen
+            <ion-button onclick="btnLogoutHandler()" fill="outline" size="small">
+              <ion-icon name="log-out-outline"></ion-icon>
+              Logout
+            </ion-button>
           </ion-content>
+        </ion-tab>
 
-        </page-resumen>
-      </ion-tab>
-
-      <!-- Pagina nuevo registro -->
-      <ion-tab tab="tabNuevoRegistro">
-        <page-nuevoRegistro class="ion-page" id="pageNuevoRegistro">
-
+        <!-- Tab nuevo registro -->
+        <ion-tab tab="tabNuevoRegistro">
           <ion-content>
             Nuevo registro
           </ion-content>
+        </ion-tab>
 
-        </page-nuevoRegistro>
-      </ion-tab>
-
-      <!-- Pagina lista de registros -->
-      <ion-tab tab="tabListaRegistros">
-        <page-listaRegistros class="ion-page" id="pageListaRegistros">
-
+        <!-- Tab lista de registros -->
+        <ion-tab tab="tabListaRegistros">
           <ion-content>
             Lista de registros
           </ion-content>
+        </ion-tab>
 
-        </page-listaRegistros>
-      </ion-tab>
-
-      <!-- Pagina mapa de usuarios -->
-      <ion-tab tab="tabMapaUsuarios">
-        <page-mapaUsuarios class="ion-page" id="pageMapaUsuarios">
-
+        <!-- Tab mapa de usuarios -->
+        <ion-tab tab="tabMapaUsuarios">
           <ion-content>
             Mapa de usuarios
           </ion-content>
+        </ion-tab>
 
-        </page-mapaUsuarios>
-      </ion-tab>
+        <!-- Botones -->
+        <ion-tab-bar slot="bottom">
 
-      <!-- Botones -->
-      <ion-tab-bar slot="bottom">
+          <!-- Resumen -->
+          <ion-tab-button tab="tabResumen">
+            <ion-icon name="stats-chart"></ion-icon>
+            Resumen
+          </ion-tab-button>
 
-        <!-- Resumen -->
-        <ion-tab-button tab="tabResumen" href="/resumen">
-          <ion-icon name="stats-chart"></ion-icon>
-          Resumen
-        </ion-tab-button>
+          <!-- Nuevo Registro -->
+          <ion-tab-button tab="tabNuevoRegistro">
+            <ion-icon name="add-circle"></ion-icon>
+            Registro
+          </ion-tab-button>
 
-        <!-- Nuevo Registro -->
-        <ion-tab-button tab="tabNuevoRegistro" href="/nuevoRegistro">
-          <ion-icon name="add-circle"></ion-icon>
-          Registro
-        </ion-tab-button>
+          <!-- Lista registros -->
+          <ion-tab-button tab="tabListaRegistros">
+            <ion-icon name="time"></ion-icon>
+            Historial
+          </ion-tab-button>
 
-        <!-- Lista registros -->
-        <ion-tab-button tab="tabListaRegistros" href="/listaRegistros">
-          <ion-icon name="time"></ion-icon>
-          Historial
-        </ion-tab-button>
+          <!-- Mapa usuarios -->
+          <ion-tab-button tab="tabMapaUsuarios">
+            <ion-icon name="navigate-circle"></ion-icon>
+            Mapa usuarios
+          </ion-tab-button>
 
-        <!-- Mapa usuarios -->
-        <ion-tab-button tab="tabMapaUsuarios" href="/mapaUsuarios">
-          <ion-icon name="navigate-circle"></ion-icon>
-          Mapa usuarios
-        </ion-tab-button>
+        </ion-tab-bar>
 
-      </ion-tab-bar>
-    </ion-tabs>
+      </ion-tabs>
+    </page-app>
 
   </ion-app>
 
