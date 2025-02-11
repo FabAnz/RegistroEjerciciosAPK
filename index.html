@@ -87,9 +87,22 @@
         </ion-tab>
 
         <!-- Tab nuevo registro -->
+
+        <!-- Agregar un registro: la aplicación deberá permitir al usuario registrar una nueva
+        sesión de ejercicio realizado. Cada sesión deberá tener referencia del usuario que la
+        agregó.
+        El usuario deberá agregar:
+          ● Actividad. La actividad seleccionada. Se almacena el id
+          ● Tiempo. El tiempo en minutos que duró la actividad.
+          ● Fecha. Se deberá seleccionar la fecha de la sesión de un campo de
+            tipo fecha. La fecha podrá ser hoy o algún día anterior, no posterior. -->
+
         <ion-tab tab="tabNuevoRegistro">
           <ion-content>
-            Nuevo registro
+            <h1>Agregar registro</h1>
+            <ion-select id="slcNuevoRegistroActividades" interface="modal" label="Actividad" label-placement="floating"
+          fill="outline">
+        </ion-select>
           </ion-content>
         </ion-tab>
 
