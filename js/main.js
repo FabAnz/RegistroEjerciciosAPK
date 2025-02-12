@@ -35,6 +35,7 @@ function navegar(e) {
   const ruta = e.detail.to
   switch (ruta) {
     case "/":
+      cargaDeDatos
       verificarInicio()
       break
     case "/login":
@@ -88,6 +89,34 @@ function cargarPaisesEnSelect() {
   document.querySelector("#slcRegistroUsuarioPais").innerHTML = lista
 }
 
+function cargarActividades() {
+  if (sistema.actividades) return
+
+  fetch(`${API_URL}/actividades.php`)
+    .then((response) => {
+      if (response.status != 200)
+        //TODO en caso de que se use la carga de paises en otro lado, modificar como se muestra el error, tal vez hacerlo en un alert global
+        document.querySelector("#pNuevoRegistroMensaje").innerHTML = "Error en el servidor, no se pueden cargar las actividades"
+      return response.json()
+    }).then((data) => {
+      if (data.mensaje) {
+        document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
+      }
+
+      sistema.actividades = data.actividades.map(a => Actividad.parse(a))
+      cargarActividadesEnSelect()
+    }).catch((error) => {
+      console.log(error)
+    })
+}
+
+function cargarActividadesEnSelect(){
+  let lista = ""
+
+  sistema.actividades.forEach(a => lista += `<ion-select-option value=${a.id} >${a.name}</ion-select-option>`)
+  document.querySelector("#slcNuevoRegistroActividades").innerHTML = lista
+}
+
 //Manejo UI
 function ocultarPantallas() {
   PANTALLA_HOME.style.display = "none"
@@ -116,7 +145,7 @@ function mostrarRegistroUsuario() {
 function mostrarPrincipal() {
   ocultarPantallas()
   PANTALLA_PRINCIPAL.style.display = "block"
-  MENU_TAB.select('tabResumen')
+  MENU_TAB.select('tabNuevoRegistro')
 }
 
 //Login
@@ -207,4 +236,9 @@ function btnRegistroUsuarioRegistrarmeHandler() {
   } catch (error) {
     document.querySelector("#pRegistroUsuarioMensaje").innerHTML = error
   }
+}
+
+//Registro de actividad
+function btnNuevoRegistroHandler() {
+  //TODO nuevo registro
 }
