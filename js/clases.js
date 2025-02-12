@@ -2,6 +2,7 @@ class Sistema {
   static s_instancia
   usuarioActivo
   paises
+  actividades
 
   static getInstancia() {
     if (!this.s_instancia) this.s_instancia = new Sistema()
@@ -31,5 +32,22 @@ class Pais {
     if (data.longitude)
       pais.longitude = data.longitude
     return pais
+  }
+}
+
+class Actividad {
+  id
+  nombre
+  imagen
+
+  static parse(data) {
+    const actividad = new Actividad()
+    if (data.id)
+      actividad.id = data.id
+    if (data.nombre)
+      actividad.nombre = data.nombre
+    if (data.imagen)
+      actividad.imagen = data.imagen
+    return actividad
   }
 }

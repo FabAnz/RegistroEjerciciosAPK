@@ -18,8 +18,7 @@
       <ion-route url="/" component="page-home"></ion-route>
       <ion-route url="/login" component="page-login"></ion-route>
       <ion-route url="/registroUsuario" component="page-registroUsuario"></ion-route>
-      <ion-route url="/app" component="page-app"></ion-route>
-    </ion-router>
+      <ion-route url="/app" component="page-app"></ion-router>
     <ion-nav id="nav"></ion-nav>
 
     <!-- Pagina home -->
@@ -87,22 +86,19 @@
         </ion-tab>
 
         <!-- Tab nuevo registro -->
-
-        <!-- Agregar un registro: la aplicación deberá permitir al usuario registrar una nueva
-        sesión de ejercicio realizado. Cada sesión deberá tener referencia del usuario que la
-        agregó.
-        El usuario deberá agregar:
-          ● Actividad. La actividad seleccionada. Se almacena el id
-          ● Tiempo. El tiempo en minutos que duró la actividad.
-          ● Fecha. Se deberá seleccionar la fecha de la sesión de un campo de
-            tipo fecha. La fecha podrá ser hoy o algún día anterior, no posterior. -->
-
         <ion-tab tab="tabNuevoRegistro">
           <ion-content>
             <h1>Agregar registro</h1>
             <ion-select id="slcNuevoRegistroActividades" interface="modal" label="Actividad" label-placement="floating"
-          fill="outline">
-        </ion-select>
+              fill="outline">
+            </ion-select>
+            <ion-input id="iNuevoRegistroTiempo" type="number" label="Minutos" label-placement="floating" fill="outline"
+              placeholder="Minutos de la actividad"></ion-input>
+            <ion-input id="iNuevoRegistroFecha" type="date" label="Fecha" fill="outline"></ion-input>
+
+            <ion-button onclick="btnNuevoRegistroHandler()" expand="block">Agregar</ion-button>
+            <p id="pNuevoRegistroMensaje"></p>
+
           </ion-content>
         </ion-tab>
 
