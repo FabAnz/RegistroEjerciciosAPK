@@ -22,6 +22,7 @@ function inicializar() {
 function subscripcionAEventos() {
   // Routeo
   ROUTER.addEventListener("ionRouteDidChange", navegar)
+  MENU_TAB.addEventListener("ionTabsWillChange", navegarTab)
 }
 
 function verificarUsuarioLocalStorage() {
@@ -35,7 +36,6 @@ function navegar(e) {
   const ruta = e.detail.to
   switch (ruta) {
     case "/":
-      cargaDeDatos
       verificarInicio()
       break
     case "/login":
@@ -61,6 +61,25 @@ function verificarInicio() {
   } else {
     NAV.setRoot("page-login")
     NAV.popToRoot()
+  }
+}
+
+function navegarTab(e) {
+  const tab = e.detail.tab
+
+  switch (tab) {
+    case "tabResumen":
+
+      break;
+    case "tabNuevoRegistro":
+      limpiarTabNuevoRegistro()
+      break;
+    case "tabListaRegistros":
+
+      break;
+    case "tabMapaUsuarios":
+
+      break;
   }
 }
 
@@ -92,7 +111,13 @@ function cargarPaisesEnSelect() {
 function cargarActividades() {
   if (sistema.actividades) return
 
-  fetch(`${API_URL}/actividades.php`)
+  fetch(`${API_URL}/actividades.php`,
+    {
+      headers: {
+        "apikey": sistema.usuarioActivo.apiKey,
+        "iduser": sistema.usuarioActivo.id
+      }
+    })
     .then((response) => {
       if (response.status != 200)
         //TODO en caso de que se use la carga de paises en otro lado, modificar como se muestra el error, tal vez hacerlo en un alert global
@@ -110,10 +135,10 @@ function cargarActividades() {
     })
 }
 
-function cargarActividadesEnSelect(){
+function cargarActividadesEnSelect() {
   let lista = ""
 
-  sistema.actividades.forEach(a => lista += `<ion-select-option value=${a.id} >${a.name}</ion-select-option>`)
+  sistema.actividades.forEach(a => lista += `<ion-select-option value=${a.id} >${a.nombre}</ion-select-option>`)
   document.querySelector("#slcNuevoRegistroActividades").innerHTML = lista
 }
 
@@ -146,6 +171,14 @@ function mostrarPrincipal() {
   ocultarPantallas()
   PANTALLA_PRINCIPAL.style.display = "block"
   MENU_TAB.select('tabNuevoRegistro')
+}
+
+function limpiarTabNuevoRegistro() {
+  document.querySelector("#slcNuevoRegistroActividades").value = ""
+  document.querySelector("#iNuevoRegistroTiempo").value = ""
+  document.querySelector("#iNuevoRegistroFecha").value = ""
+  document.querySelector("#pNuevoRegistroMensaje").innerHTML = ""
+  cargarActividades()
 }
 
 //Login
@@ -240,5 +273,45 @@ function btnRegistroUsuarioRegistrarmeHandler() {
 
 //Registro de actividad
 function btnNuevoRegistroHandler() {
-  //TODO nuevo registro
+  const idActividad = document.querySelector("#slcNuevoRegistroActividades").value
+  const tiempo = document.querySelector("#iNuevoRegistroTiempo").value
+  const fecha = document.querySelector("#iNuevoRegistroFecha").value
+
+  const nuevaActividad = {
+    idActividad: idActividad,
+    idUsuario: sistema.usuarioActivo.id,
+    tiempo: tiempo,
+    fecha: fecha
+  }
+
+  try {
+    if (!idActividad || !tiempo || !fecha)
+      throw new Error("Se deben completar todos los datos")
+
+    if (new Date(fecha) > new Date())
+      throw new Error("La fecha no puede ser posterior a hoy")
+
+    fetch(`${API_URL}/registros.php`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": sistema.usuarioActivo.apiKey,
+        "iduser": sistema.usuarioActivo.id
+      },
+      body: JSON.stringify(nuevaActividad)
+    })
+      .then((response) => {
+        if (response.status != 200)
+          document.querySelector("#pNuevoRegistroMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
+        return response.json()
+      }).then((data) => {
+        document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
+      }).catch((error) => {
+        console.log(error)
+      })
+
+
+  } catch (error) {
+    document.querySelector("#pNuevoRegistroMensaje").innerHTML = error
+  }
 }
