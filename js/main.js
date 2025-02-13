@@ -1,5 +1,6 @@
 //Constantes
-const API_URL = "https://movetrack.develotion.com"
+const API_URL = "https://movetrack.develotion.com/"
+const API_IMAGENES = "https://movetrack.develotion.com/imgs/"
 
 //DOM
 const ROUTER = document.querySelector("#ruteo")
@@ -36,7 +37,11 @@ function navegar(e) {
   const ruta = e.detail.to
   switch (ruta) {
     case "/":
-      verificarInicio()
+      cargarDatos()
+        .then(() => {
+          //TODO Crear pantalla de carga
+          verificarInicio()
+        })
       break
     case "/login":
       mostrarLogin()
@@ -75,7 +80,7 @@ function navegarTab(e) {
       limpiarTabNuevoRegistro()
       break;
     case "tabListaRegistros":
-
+      cargarListaRegistros()
       break;
     case "tabMapaUsuarios":
 
@@ -84,10 +89,15 @@ function navegarTab(e) {
 }
 
 //Carga de datos
-function cargarPaises() {
-  if (sistema.paises) return
+function cargarDatos() {
+  //TODO eliminar las funciones de los lugares que no sean este
+  return Promise.all([cargarPaises(), cargarActividades()])
+}
 
-  fetch(`${API_URL}/paises.php`)
+function cargarPaises() {
+  if (sistema.paises) return Promise.resolve()
+
+  return fetch(`${API_URL}paises.php`)
     .then((response) => {
       if (response.status != 200)
         //TODO en caso de que se use la carga de paises en otro lado, modificar como se muestra el error, tal vez hacerlo en un alert global
@@ -109,9 +119,9 @@ function cargarPaisesEnSelect() {
 }
 
 function cargarActividades() {
-  if (sistema.actividades) return
+  if (sistema.actividades) return Promise.resolve()
 
-  fetch(`${API_URL}/actividades.php`,
+  return fetch(`${API_URL}actividades.php`,
     {
       headers: {
         "apikey": sistema.usuarioActivo.apiKey,
@@ -127,7 +137,6 @@ function cargarActividades() {
       if (data.mensaje) {
         document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
       }
-
       sistema.actividades = data.actividades.map(a => Actividad.parse(a))
       cargarActividadesEnSelect()
     }).catch((error) => {
@@ -140,6 +149,71 @@ function cargarActividadesEnSelect() {
 
   sistema.actividades.forEach(a => lista += `<ion-select-option value=${a.id} >${a.nombre}</ion-select-option>`)
   document.querySelector("#slcNuevoRegistroActividades").innerHTML = lista
+}
+
+function cargarListaRegistros() {
+  fetch(`${API_URL}registros.php?idUsuario=${sistema.usuarioActivo.id}`,
+    {
+      headers: {
+        "apikey": sistema.usuarioActivo.apiKey,
+        "iduser": sistema.usuarioActivo.id
+      }
+    })
+    .then((response) => {
+      if (response.status != 200)
+        //TODO en caso de que se use la carga de paises en otro lado, modificar como se muestra el error, tal vez hacerlo en un alert global
+        document.querySelector("#pListaRegistrosMensaje").innerHTML = "Error en el servidor, no se pueden cargar las actividades"
+      return response.json()
+    }).then((data) => {
+      if (data.mensaje) {
+        document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
+      }
+      sistema.registros = data.registros.map(r => Registro.parse(r))
+      cargarRegistrosEnPantalla()
+    }).catch((error) => {
+      console.log(error)
+    })
+}
+
+function cargarRegistrosEnPantalla() {
+  let registros = ""
+  let actividad = new Actividad()
+  sistema.registros.forEach(r => {
+    actividad = sistema.actividades.find(a => r.idActividad == a.id)
+    registros += `
+      <ion-card>
+        <ion-grid>
+          <ion-row class="ion-align-items-center">
+            <ion-col size="3">
+              <img alt="${actividad.nombre}" src="${API_IMAGENES}${actividad.imagen}.png" />
+            </ion-col>
+            <ion-col>
+                <ion-grid>
+                  <ion-row class="ion-justify-content-between ion-align-items-center">
+                    <ion-col>
+                      <ion-card-header>
+                        <ion-card-title>${actividad.nombre}</ion-card-title>
+                        <ion-card-subtitle>${r.tiempo} min</ion-card-subtitle>
+                      </ion-card-header>
+                      <ion-card-content>
+                        ${r.fecha}
+                      </ion-card-content>
+                    </ion-col>
+                    <ion-col class="ion-text-end">
+                      <ion-button color="medium" fill="clear" shape="round">
+                          <ion-icon slot="icon-only" name="trash"></ion-icon>
+                      </ion-button>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card>
+    `
+  })
+
+  document.querySelector("#dListaRegistros").innerHTML = registros
 }
 
 //Manejo UI
@@ -170,7 +244,8 @@ function mostrarRegistroUsuario() {
 function mostrarPrincipal() {
   ocultarPantallas()
   PANTALLA_PRINCIPAL.style.display = "block"
-  MENU_TAB.select('tabNuevoRegistro')
+  MENU_TAB.select('tabListaRegistros')
+  cargarListaRegistros()
 }
 
 function limpiarTabNuevoRegistro() {
@@ -197,7 +272,7 @@ function btnLoginIngresarHandler() {
     if (!usuario || !password)
       throw new Error("Se deben completar todos los datos")
 
-    fetch(`${API_URL}/login.php`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(usuarioBody) })
+    fetch(`${API_URL}login.php`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(usuarioBody) })
       .then((response) => {
         if (response.status != 200)
           document.querySelector("#pRegistroUsuarioMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
@@ -248,7 +323,7 @@ function btnRegistroUsuarioRegistrarmeHandler() {
     if (!usuario || !password || !idPais)
       throw new Error("Se deben completar todos los datos")
 
-    fetch(`${API_URL}/usuarios.php`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(nuevoUsuario) })
+    fetch(`${API_URL}usuarios.php`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(nuevoUsuario) })
       .then((response) => {
         if (response.status != 200)
           document.querySelector("#pRegistroUsuarioMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
@@ -291,7 +366,7 @@ function btnNuevoRegistroHandler() {
     if (new Date(fecha) > new Date())
       throw new Error("La fecha no puede ser posterior a hoy")
 
-    fetch(`${API_URL}/registros.php`, {
+    fetch(`${API_URL}registros.php`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -306,6 +381,7 @@ function btnNuevoRegistroHandler() {
         return response.json()
       }).then((data) => {
         document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
+        cargarRegistrosEnPantalla()
       }).catch((error) => {
         console.log(error)
       })

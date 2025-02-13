@@ -3,6 +3,7 @@ class Sistema {
   usuarioActivo
   paises
   actividades
+  registros
 
   static getInstancia() {
     if (!this.s_instancia) this.s_instancia = new Sistema()
@@ -49,5 +50,25 @@ class Actividad {
     if (data.imagen)
       actividad.imagen = data.imagen
     return actividad
+  }
+
+
+}
+
+class Registro {
+  id
+  idActividad
+  idUsuario
+  tiempo
+  fecha
+
+  static parse(data) {
+    const registro = new Registro()
+    if (data.id) registro.id = data.id
+    if (data.idActividad) registro.idActividad = data.idActividad
+    if (data.idUsuario) registro.idUsuario = data.idUsuario
+    if (data.tiempo) registro.tiempo = data.tiempo
+    if (data.fecha) registro.fecha = data.fecha
+    return registro
   }
 }
