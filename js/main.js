@@ -37,9 +37,9 @@ function navegar(e) {
   const ruta = e.detail.to
   switch (ruta) {
     case "/":
-      cargarDatos()
+      //TODO Crear pantalla de carga
+      cargarPaises()
         .then(() => {
-          //TODO Crear pantalla de carga
           verificarInicio()
         })
       break
@@ -47,11 +47,14 @@ function navegar(e) {
       mostrarLogin()
       break
     case "/registroUsuario":
-      cargarPaises()
       mostrarRegistroUsuario()
       break
     case "/app":
-      mostrarPrincipal()
+      //TODO Crear pantalla de carga
+      cargarActividades()
+        .then(() => {
+          mostrarPrincipal()
+        })
       break
     default:
       verificarInicio()
@@ -62,10 +65,8 @@ function navegar(e) {
 function verificarInicio() {
   if (sistema.usuarioActivo) {
     NAV.setRoot("page-app")
-    NAV.popToRoot()
   } else {
     NAV.setRoot("page-login")
-    NAV.popToRoot()
   }
 }
 
@@ -86,12 +87,6 @@ function navegarTab(e) {
 
       break;
   }
-}
-
-//Carga de datos
-function cargarDatos() {
-  //TODO eliminar las funciones de los lugares que no sean este
-  return Promise.all([cargarPaises(), cargarActividades()])
 }
 
 function cargarPaises() {
@@ -134,6 +129,10 @@ function cargarActividades() {
         document.querySelector("#pNuevoRegistroMensaje").innerHTML = "Error en el servidor, no se pueden cargar las actividades"
       return response.json()
     }).then((data) => {
+      if (data.codigo == 401) {
+        btnLogoutHandler()
+        return
+      }
       if (data.mensaje) {
         document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
       }
@@ -166,6 +165,10 @@ function cargarListaRegistros() {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = "Error en el servidor, no se pueden cargar las actividades"
       return response.json()
     }).then((data) => {
+      if (data.codigo == 401) {
+        btnLogoutHandler()
+        return
+      }
       if (data.mensaje) {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
       }
@@ -244,13 +247,9 @@ function mostrarRegistroUsuario() {
 }
 
 function mostrarPrincipal() {
-  cargarDatos()
-    .then(() => {
-      //TODO Crear pantalla de carga
-      ocultarPantallas()
-      PANTALLA_PRINCIPAL.style.display = "block"
-      MENU_TAB.select('tabListaRegistros')
-    })
+  ocultarPantallas()
+  PANTALLA_PRINCIPAL.style.display = "block"
+  MENU_TAB.select('tabListaRegistros')
 }
 
 function limpiarTabNuevoRegistro() {
@@ -258,7 +257,6 @@ function limpiarTabNuevoRegistro() {
   document.querySelector("#iNuevoRegistroTiempo").value = ""
   document.querySelector("#iNuevoRegistroFecha").value = ""
   document.querySelector("#pNuevoRegistroMensaje").innerHTML = ""
-  cargarActividades()
 }
 
 //Login
@@ -287,7 +285,6 @@ function btnLoginIngresarHandler() {
           document.querySelector("#pLoginMensaje").innerHTML = data.mensaje
         } else {
           NAV.setRoot('page-app')
-          NAV.popToRoot()
           sistema.usuarioActivo = data
           localStorage.setItem('OBDesAPKUsuarioActivo', JSON.stringify(data))
         }
@@ -305,7 +302,6 @@ function btnLogoutHandler() {
   localStorage.clear()
   sistema.usuarioActivo = null
   NAV.setRoot('page-login')
-  NAV.popToRoot()
   mostrarLogin()
 }
 
@@ -385,6 +381,10 @@ function btnNuevoRegistroHandler() {
           document.querySelector("#pNuevoRegistroMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
         return response.json()
       }).then((data) => {
+        if (data.codigo == 401) {
+          btnLogoutHandler()
+          return
+        }
         document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
         cargarRegistrosEnPantalla()
       }).catch((error) => {
@@ -420,6 +420,10 @@ function eliminarRegistro() {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
       return response.json()
     }).then((data) => {
+      if (data.codigo == 401) {
+        btnLogoutHandler()
+        return
+      }
       document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
       cargarListaRegistros()
     }).catch((error) => {

@@ -1,6 +1,6 @@
 class Sistema {
   static s_instancia
-  usuarioActivo
+  usuarioActivo = null
   paises
   actividades
   registros
