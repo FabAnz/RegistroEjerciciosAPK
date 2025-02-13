@@ -27,7 +27,7 @@
     <!-- Pagina login -->
     <page-login class="ion-page" id="pageLogin">
 
-      <ion-content>
+      <ion-content class="ion-padding">
         <h1>Hola!</h1>
 
         <ion-input id="iLoginUsuario" type="text" label="Usuario" label-placement="floating" fill="outline"
@@ -55,7 +55,7 @@
         </ion-toolbar>
       </ion-header>
 
-      <ion-content>
+      <ion-content class="ion-padding">
         <ion-input id="iRegistroUsuarioUsuario" type="text" label="Usuario" label-placement="floating" fill="outline"
           placeholder="Nombre de usuario"></ion-input>
         <ion-input id="iRegistroUsuarioPassword" type="password" label="Password" label-placement="floating"
@@ -77,7 +77,7 @@
 
         <!-- Tab resumen -->
         <ion-tab tab="tabResumen">
-          <ion-content>
+          <ion-content class="ion-padding">
             <ion-button onclick="btnLogoutHandler()" fill="outline" size="small">
               <ion-icon name="log-out-outline"></ion-icon>
               Logout
@@ -88,7 +88,7 @@
 
         <!-- Tab nuevo registro -->
         <ion-tab tab="tabNuevoRegistro">
-          <ion-content>
+          <ion-content class="ion-padding">
             <h1>Agregar registro</h1>
             <ion-select id="slcNuevoRegistroActividades" interface="modal" label="Actividad" label-placement="floating"
               fill="outline">
@@ -105,17 +105,17 @@
 
         <!-- Tab lista de registros -->
         <ion-tab tab="tabListaRegistros">
-          <ion-content>
+          <ion-content class="ion-padding">
             <h1>Lista de registros</h1>
+            <p id="pListaRegistrosMensaje"></p>
 
             <div id="dListaRegistros"></div>
-            <p id="pListaRegistrosMensaje"></p>
           </ion-content>
         </ion-tab>
 
         <!-- Tab mapa de usuarios -->
         <ion-tab tab="tabMapaUsuarios">
-          <ion-content>
+          <ion-content class="ion-padding">
             Mapa de usuarios
           </ion-content>
         </ion-tab>

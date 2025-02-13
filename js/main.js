@@ -152,6 +152,7 @@ function cargarActividadesEnSelect() {
 }
 
 function cargarListaRegistros() {
+  document.querySelector("#pListaRegistrosMensaje").innerHTML = ""
   fetch(`${API_URL}registros.php?idUsuario=${sistema.usuarioActivo.id}`,
     {
       headers: {
@@ -189,7 +190,7 @@ function cargarRegistrosEnPantalla() {
             </ion-col>
             <ion-col>
                 <ion-grid>
-                  <ion-row class="ion-justify-content-between ion-align-items-center">
+                  <ion-row class="ion-align-items-center">
                     <ion-col>
                       <ion-card-header>
                         <ion-card-title>${actividad.nombre}</ion-card-title>
@@ -199,8 +200,8 @@ function cargarRegistrosEnPantalla() {
                         ${r.fecha}
                       </ion-card-content>
                     </ion-col>
-                    <ion-col class="ion-text-end">
-                      <ion-button color="medium" fill="clear" shape="round">
+                    <ion-col size="3">
+                      <ion-button idRegistro="${r.id}" class="btnListaRegistrosEliminar" color="medium" fill="clear" shape="round">
                           <ion-icon slot="icon-only" name="trash"></ion-icon>
                       </ion-button>
                     </ion-col>
@@ -214,6 +215,7 @@ function cargarRegistrosEnPantalla() {
   })
 
   document.querySelector("#dListaRegistros").innerHTML = registros
+  btnListaRegistrosEliminarHandler()
 }
 
 //Manejo UI
@@ -242,10 +244,13 @@ function mostrarRegistroUsuario() {
 }
 
 function mostrarPrincipal() {
-  ocultarPantallas()
-  PANTALLA_PRINCIPAL.style.display = "block"
-  MENU_TAB.select('tabListaRegistros')
-  cargarListaRegistros()
+  cargarDatos()
+    .then(() => {
+      //TODO Crear pantalla de carga
+      ocultarPantallas()
+      PANTALLA_PRINCIPAL.style.display = "block"
+      MENU_TAB.select('tabListaRegistros')
+    })
 }
 
 function limpiarTabNuevoRegistro() {
@@ -390,4 +395,34 @@ function btnNuevoRegistroHandler() {
   } catch (error) {
     document.querySelector("#pNuevoRegistroMensaje").innerHTML = error
   }
+}
+
+//Eliminar actividad
+function btnListaRegistrosEliminarHandler() {
+  const botones = document.querySelectorAll(".btnListaRegistrosEliminar")
+  botones.forEach(b => (b.addEventListener("click", eliminarRegistro)))
+}
+
+function eliminarRegistro() {
+  const idRegistro = this.getAttribute("idRegistro")
+
+  fetch(`${API_URL}registros.php?idRegistro=${idRegistro}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": sistema.usuarioActivo.apiKey,
+      "iduser": sistema.usuarioActivo.id
+    }
+  })
+    .then((response) => {
+      if (response.status != 200)
+        //TODO Cambiar todos los p de mensaje por un toast
+        document.querySelector("#pListaRegistrosMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
+      return response.json()
+    }).then((data) => {
+      document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
+      cargarListaRegistros()
+    }).catch((error) => {
+      console.log(error)
+    })
 }
