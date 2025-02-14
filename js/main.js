@@ -24,6 +24,7 @@ function subscripcionAEventos() {
   // Routeo
   ROUTER.addEventListener("ionRouteDidChange", navegar)
   MENU_TAB.addEventListener("ionTabsWillChange", navegarTab)
+  document.querySelector("#rFiltroRegistros").addEventListener("ionChange", filtrarRegistros)
 }
 
 function verificarUsuarioLocalStorage() {
@@ -31,6 +32,7 @@ function verificarUsuarioLocalStorage() {
   if (usuarioRecuperado)
     sistema.usuarioActivo = JSON.parse(usuarioRecuperado)
 }
+
 
 //Navegacion
 function navegar(e) {
@@ -173,7 +175,7 @@ function cargarListaRegistros() {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
       }
       sistema.registros = data.registros.map(r => Registro.parse(r))
-      cargarRegistrosEnPantalla()
+      filtrarRegistros()
     }).catch((error) => {
       console.log(error)
     })
@@ -182,7 +184,7 @@ function cargarListaRegistros() {
 function cargarRegistrosEnPantalla() {
   let registros = ""
   let actividad = new Actividad()
-  sistema.registros.forEach(r => {
+  sistema.registrosFiltrados.forEach(r => {
     actividad = sistema.actividades.find(a => r.idActividad == a.id)
     registros += `
       <ion-card>
@@ -360,11 +362,12 @@ function btnNuevoRegistroHandler() {
     fecha: fecha
   }
 
+  const fechaHoy = new Date()
+  const fechaIngresada = new Date(fecha + "T00:00")
   try {
     if (!idActividad || !tiempo || !fecha)
       throw new Error("Se deben completar todos los datos")
-
-    if (new Date(fecha) > new Date())
+    if (fechaIngresada > fechaHoy)
       throw new Error("La fecha no puede ser posterior a hoy")
 
     fetch(`${API_URL}registros.php`, {
@@ -397,7 +400,7 @@ function btnNuevoRegistroHandler() {
   }
 }
 
-//Eliminar actividad
+//Eliminar registro
 function btnListaRegistrosEliminarHandler() {
   const botones = document.querySelectorAll(".btnListaRegistrosEliminar")
   botones.forEach(b => (b.addEventListener("click", eliminarRegistro)))
@@ -429,4 +432,29 @@ function eliminarRegistro() {
     }).catch((error) => {
       console.log(error)
     })
+}
+
+//Filtrar registros
+function filtrarRegistros() {
+  const periodo = document.querySelector("#rFiltroRegistros").value
+  let fechaLimite = new Date()
+
+  switch (periodo) {
+    case "todo":
+      sistema.registrosFiltrados = sistema.registros
+      break
+    case "semana":
+      fechaLimite.setDate(fechaLimite.getDate() - 7)
+      sistema.registrosFiltrados = sistema.registros.filter(r => (
+        new Date(r.fecha + "T00:00") >= fechaLimite
+      ))
+      break
+    case "mes":
+      fechaLimite.setMonth(fechaLimite.getMonth() - 1)
+      sistema.registrosFiltrados = sistema.registros.filter(r => (
+        new Date(r.fecha + "T00:00") >= fechaLimite
+      ))
+      break
+  }
+  cargarRegistrosEnPantalla()
 }

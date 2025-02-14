@@ -4,6 +4,7 @@ class Sistema {
   paises
   actividades
   registros
+  registrosFiltrados
 
   static getInstancia() {
     if (!this.s_instancia) this.s_instancia = new Sistema()
