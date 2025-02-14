@@ -1,9 +1,10 @@
 class Sistema {
   static s_instancia
-  usuarioActivo
+  usuarioActivo = null
   paises
   actividades
   registros
+  registrosFiltrados
 
   static getInstancia() {
     if (!this.s_instancia) this.s_instancia = new Sistema()

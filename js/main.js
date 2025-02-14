@@ -24,6 +24,7 @@ function subscripcionAEventos() {
   // Routeo
   ROUTER.addEventListener("ionRouteDidChange", navegar)
   MENU_TAB.addEventListener("ionTabsWillChange", navegarTab)
+  document.querySelector("#rFiltroRegistros").addEventListener("ionChange", filtrarRegistros)
 }
 
 function verificarUsuarioLocalStorage() {
@@ -32,14 +33,15 @@ function verificarUsuarioLocalStorage() {
     sistema.usuarioActivo = JSON.parse(usuarioRecuperado)
 }
 
+
 //Navegacion
 function navegar(e) {
   const ruta = e.detail.to
   switch (ruta) {
     case "/":
-      cargarDatos()
+      //TODO Crear pantalla de carga
+      cargarPaises()
         .then(() => {
-          //TODO Crear pantalla de carga
           verificarInicio()
         })
       break
@@ -47,11 +49,14 @@ function navegar(e) {
       mostrarLogin()
       break
     case "/registroUsuario":
-      cargarPaises()
       mostrarRegistroUsuario()
       break
     case "/app":
-      mostrarPrincipal()
+      //TODO Crear pantalla de carga
+      cargarActividades()
+        .then(() => {
+          mostrarPrincipal()
+        })
       break
     default:
       verificarInicio()
@@ -62,10 +67,8 @@ function navegar(e) {
 function verificarInicio() {
   if (sistema.usuarioActivo) {
     NAV.setRoot("page-app")
-    NAV.popToRoot()
   } else {
     NAV.setRoot("page-login")
-    NAV.popToRoot()
   }
 }
 
@@ -86,12 +89,6 @@ function navegarTab(e) {
 
       break;
   }
-}
-
-//Carga de datos
-function cargarDatos() {
-  //TODO eliminar las funciones de los lugares que no sean este
-  return Promise.all([cargarPaises(), cargarActividades()])
 }
 
 function cargarPaises() {
@@ -134,6 +131,10 @@ function cargarActividades() {
         document.querySelector("#pNuevoRegistroMensaje").innerHTML = "Error en el servidor, no se pueden cargar las actividades"
       return response.json()
     }).then((data) => {
+      if (data.codigo == 401) {
+        btnLogoutHandler()
+        return
+      }
       if (data.mensaje) {
         document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
       }
@@ -166,11 +167,15 @@ function cargarListaRegistros() {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = "Error en el servidor, no se pueden cargar las actividades"
       return response.json()
     }).then((data) => {
+      if (data.codigo == 401) {
+        btnLogoutHandler()
+        return
+      }
       if (data.mensaje) {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
       }
       sistema.registros = data.registros.map(r => Registro.parse(r))
-      cargarRegistrosEnPantalla()
+      filtrarRegistros()
     }).catch((error) => {
       console.log(error)
     })
@@ -179,7 +184,7 @@ function cargarListaRegistros() {
 function cargarRegistrosEnPantalla() {
   let registros = ""
   let actividad = new Actividad()
-  sistema.registros.forEach(r => {
+  sistema.registrosFiltrados.forEach(r => {
     actividad = sistema.actividades.find(a => r.idActividad == a.id)
     registros += `
       <ion-card>
@@ -244,13 +249,9 @@ function mostrarRegistroUsuario() {
 }
 
 function mostrarPrincipal() {
-  cargarDatos()
-    .then(() => {
-      //TODO Crear pantalla de carga
-      ocultarPantallas()
-      PANTALLA_PRINCIPAL.style.display = "block"
-      MENU_TAB.select('tabListaRegistros')
-    })
+  ocultarPantallas()
+  PANTALLA_PRINCIPAL.style.display = "block"
+  MENU_TAB.select('tabListaRegistros')
 }
 
 function limpiarTabNuevoRegistro() {
@@ -258,7 +259,6 @@ function limpiarTabNuevoRegistro() {
   document.querySelector("#iNuevoRegistroTiempo").value = ""
   document.querySelector("#iNuevoRegistroFecha").value = ""
   document.querySelector("#pNuevoRegistroMensaje").innerHTML = ""
-  cargarActividades()
 }
 
 //Login
@@ -287,7 +287,6 @@ function btnLoginIngresarHandler() {
           document.querySelector("#pLoginMensaje").innerHTML = data.mensaje
         } else {
           NAV.setRoot('page-app')
-          NAV.popToRoot()
           sistema.usuarioActivo = data
           localStorage.setItem('OBDesAPKUsuarioActivo', JSON.stringify(data))
         }
@@ -305,7 +304,6 @@ function btnLogoutHandler() {
   localStorage.clear()
   sistema.usuarioActivo = null
   NAV.setRoot('page-login')
-  NAV.popToRoot()
   mostrarLogin()
 }
 
@@ -364,11 +362,12 @@ function btnNuevoRegistroHandler() {
     fecha: fecha
   }
 
+  const fechaHoy = new Date()
+  const fechaIngresada = new Date(fecha + "T00:00")
   try {
     if (!idActividad || !tiempo || !fecha)
       throw new Error("Se deben completar todos los datos")
-
-    if (new Date(fecha) > new Date())
+    if (fechaIngresada > fechaHoy)
       throw new Error("La fecha no puede ser posterior a hoy")
 
     fetch(`${API_URL}registros.php`, {
@@ -385,6 +384,10 @@ function btnNuevoRegistroHandler() {
           document.querySelector("#pNuevoRegistroMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
         return response.json()
       }).then((data) => {
+        if (data.codigo == 401) {
+          btnLogoutHandler()
+          return
+        }
         document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
         cargarRegistrosEnPantalla()
       }).catch((error) => {
@@ -397,7 +400,7 @@ function btnNuevoRegistroHandler() {
   }
 }
 
-//Eliminar actividad
+//Eliminar registro
 function btnListaRegistrosEliminarHandler() {
   const botones = document.querySelectorAll(".btnListaRegistrosEliminar")
   botones.forEach(b => (b.addEventListener("click", eliminarRegistro)))
@@ -420,9 +423,38 @@ function eliminarRegistro() {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
       return response.json()
     }).then((data) => {
+      if (data.codigo == 401) {
+        btnLogoutHandler()
+        return
+      }
       document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
       cargarListaRegistros()
     }).catch((error) => {
       console.log(error)
     })
+}
+
+//Filtrar registros
+function filtrarRegistros() {
+  const periodo = document.querySelector("#rFiltroRegistros").value
+  let fechaLimite = new Date()
+
+  switch (periodo) {
+    case "todo":
+      sistema.registrosFiltrados = sistema.registros
+      break
+    case "semana":
+      fechaLimite.setDate(fechaLimite.getDate() - 7)
+      sistema.registrosFiltrados = sistema.registros.filter(r => (
+        new Date(r.fecha + "T00:00") >= fechaLimite
+      ))
+      break
+    case "mes":
+      fechaLimite.setMonth(fechaLimite.getMonth() - 1)
+      sistema.registrosFiltrados = sistema.registros.filter(r => (
+        new Date(r.fecha + "T00:00") >= fechaLimite
+      ))
+      break
+  }
+  cargarRegistrosEnPantalla()
 }

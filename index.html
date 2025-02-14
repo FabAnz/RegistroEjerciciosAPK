@@ -109,6 +109,23 @@
             <h1>Lista de registros</h1>
             <p id="pListaRegistrosMensaje"></p>
 
+            <ion-item>
+              <ion-label>Periodo</ion-label>
+              <ion-radio-group value="todo" id="rFiltroRegistros">
+                <ion-row>
+                  <ion-col>
+                    <ion-radio value="todo" justify="start">Todo</ion-radio>
+                  </ion-col>
+                  <ion-col>
+                    <ion-radio value="semana" justify="start">Semana</ion-radio>
+                  </ion-col>
+                  <ion-col>
+                    <ion-radio value="mes" justify="start">Mes</ion-radio>
+                  </ion-col>
+                </ion-row>
+              </ion-radio-group>
+            </ion-item>
+
             <div id="dListaRegistros"></div>
           </ion-content>
         </ion-tab>
