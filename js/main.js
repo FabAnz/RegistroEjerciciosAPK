@@ -78,7 +78,7 @@ function navegarTab(e) {
 
   switch (tab) {
     case "tabTiempos":
-
+      tiempos()
       break;
     case "tabActividades":
       cargarListaRegistros()
@@ -460,4 +460,14 @@ function filtrarRegistros() {
       break
   }
   cargarRegistrosEnPantalla()
+}
+
+//Mostrar tiempo de entrenamiento
+function tiempos() {
+  tiempoTotal()
+}
+
+function tiempoTotal() {
+  const tiempoTotal = sistema.registros.reduce((total, r) => total + r.tiempo, 0)
+  document.querySelector('#tiempoTotal').innerHTML=`Tiempo total: ${tiempoTotal/60} hs`
 }
