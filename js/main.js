@@ -460,9 +460,13 @@ function filtrarRegistrosPorPeriodo(periodo) {
       sistema.registrosFiltrados = sistema.registros
       break
     case "hoy":
-      sistema.registrosFiltrados = sistema.registros.filter(r => (
-        new Date(r.fecha + "T00:00") == fechaLimite
-      ))
+      fechaLimite.setHours(0, 0, 0, 0) // Elimina horas, minutos, segundos y milisegundos
+      sistema.registrosFiltrados = sistema.registros.filter(r => {
+        let fechaRegistro = new Date(r.fecha + "T00:00")
+        fechaRegistro.setHours(0, 0, 0, 0)
+        return fechaRegistro.getTime() == fechaLimite.getTime()
+      })
+      break
     case "semana":
       fechaLimite.setDate(fechaLimite.getDate() - 7)
       sistema.registrosFiltrados = sistema.registros.filter(r => (
@@ -486,12 +490,12 @@ function tiempos() {
 
 function tiempoTotal() {
   const tiempoTotal = sistema.registros.reduce((total, r) => total + r.tiempo, 0) / 60
-  document.querySelector('#tiempoTotal').innerHTML = `Tiempo total: ${tiempoTotal.toFixed(2)} hs`
+  document.querySelector('#tiempoTotal').innerHTML = `Haz entrenado ${tiempoTotal.toFixed(2)} hs`
 }
 
 function tiempoDelDia() {
   filtrarRegistrosPorPeriodo('hoy')
 
   const tiempoTotal = sistema.registrosFiltrados.reduce((total, r) => total + r.tiempo, 0)
-  document.querySelector('#tiempoDiario').innerHTML = `Tiempo total: ${tiempoTotal} minutos`
+  document.querySelector('#tiempoDiario').innerHTML = `Hoy entrenaste ${tiempoTotal} minutos`
 }
