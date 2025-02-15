@@ -25,7 +25,7 @@ function subscripcionAEventos() {
   // Routeo
   ROUTER.addEventListener("ionRouteDidChange", navegar)
   MENU_TAB.addEventListener("ionTabsWillChange", navegarTab)
-  document.querySelector("#rFiltroRegistros").addEventListener("ionChange", filtrarRegistros)
+  document.querySelector("#rFiltroRegistros").addEventListener("ionChange", filtrarRegistrosEnActividades)
 }
 
 function verificarUsuarioLocalStorage() {
@@ -173,7 +173,7 @@ function cargarListaRegistros() {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
       }
       sistema.registros = data.registros.map(r => Registro.parse(r))
-      filtrarRegistros()
+      filtrarRegistrosEnActividades()
     }).catch((error) => {
       console.log(error)
     })
@@ -438,14 +438,24 @@ function eliminarRegistro() {
 }
 
 //Filtrar registros
-function filtrarRegistros() {
+function filtrarRegistrosEnActividades() {
   const periodo = document.querySelector("#rFiltroRegistros").value
+  
+  filtrarRegistrosPorPeriodo(periodo)
+  cargarRegistrosEnPantalla()
+}
+
+function filtrarRegistrosPorPeriodo(periodo){
   let fechaLimite = new Date()
 
   switch (periodo) {
     case "todo":
       sistema.registrosFiltrados = sistema.registros
       break
+    case "hoy":
+      sistema.registrosFiltrados = sistema.registros.filter(r => (
+        new Date(r.fecha + "T00:00") == fechaLimite
+      ))
     case "semana":
       fechaLimite.setDate(fechaLimite.getDate() - 7)
       sistema.registrosFiltrados = sistema.registros.filter(r => (
@@ -459,15 +469,22 @@ function filtrarRegistros() {
       ))
       break
   }
-  cargarRegistrosEnPantalla()
 }
 
 //Mostrar tiempo de entrenamiento
 function tiempos() {
   tiempoTotal()
+  tiempoDelDia()
 }
 
 function tiempoTotal() {
-  const tiempoTotal = sistema.registros.reduce((total, r) => total + r.tiempo, 0)
-  document.querySelector('#tiempoTotal').innerHTML=`Tiempo total: ${tiempoTotal/60} hs`
+  const tiempoTotal = sistema.registros.reduce((total, r) => total + r.tiempo, 0)/60
+  document.querySelector('#tiempoTotal').innerHTML=`Tiempo total: ${tiempoTotal.toFixed(2)} hs`
+}
+
+function tiempoDelDia(){
+  filtrarRegistrosPorPeriodo('hoy')
+
+  const tiempoTotal = sistema.registrosFiltrados.reduce((total, r) => total + r.tiempo, 0)
+  document.querySelector('#tiempoDiario').innerHTML=`Tiempo total: ${tiempoTotal} minutos`
 }
