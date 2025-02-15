@@ -11,6 +11,7 @@ const PANTALLA_LOGIN = document.querySelector("#pageLogin")
 const PANTALLA_REGISTRO_USUARIO = document.querySelector("#pageRegistroUsuario")
 const PANTALLA_PRINCIPAL = document.querySelector("#pageApp")
 const MENU_TAB = document.querySelector('#tabMain')
+const MODAL_AGREGAR_ACTIVIDAD = document.querySelector('#modAgregarActividad')
 
 // Inicializaci n del sistema
 inicializar()
@@ -24,7 +25,7 @@ function subscripcionAEventos() {
   // Routeo
   ROUTER.addEventListener("ionRouteDidChange", navegar)
   MENU_TAB.addEventListener("ionTabsWillChange", navegarTab)
-  document.querySelector("#rFiltroRegistros").addEventListener("ionChange", filtrarRegistros)
+  document.querySelector("#rFiltroRegistros").addEventListener("ionChange", filtrarRegistrosEnActividades)
 }
 
 function verificarUsuarioLocalStorage() {
@@ -76,13 +77,10 @@ function navegarTab(e) {
   const tab = e.detail.tab
 
   switch (tab) {
-    case "tabResumen":
-
+    case "tabTiempos":
+      tiempos()
       break;
-    case "tabNuevoRegistro":
-      limpiarTabNuevoRegistro()
-      break;
-    case "tabListaRegistros":
+    case "tabActividades":
       cargarListaRegistros()
       break;
     case "tabMapaUsuarios":
@@ -175,7 +173,7 @@ function cargarListaRegistros() {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
       }
       sistema.registros = data.registros.map(r => Registro.parse(r))
-      filtrarRegistros()
+      filtrarRegistrosEnActividades()
     }).catch((error) => {
       console.log(error)
     })
@@ -223,6 +221,11 @@ function cargarRegistrosEnPantalla() {
   btnListaRegistrosEliminarHandler()
 }
 
+function cerrarModal() {
+  MODAL_AGREGAR_ACTIVIDAD.dismiss()
+  document.querySelector('#pNuevoRegistroMensaje').innerHTML = ''//TODO borrar cuando funcione el toast
+}
+
 //Manejo UI
 function ocultarPantallas() {
   PANTALLA_HOME.style.display = "none"
@@ -251,10 +254,10 @@ function mostrarRegistroUsuario() {
 function mostrarPrincipal() {
   ocultarPantallas()
   PANTALLA_PRINCIPAL.style.display = "block"
-  MENU_TAB.select('tabListaRegistros')
+  MENU_TAB.select('tabActividades')
 }
 
-function limpiarTabNuevoRegistro() {
+function limpiarModNuevoRegistro() {
   document.querySelector("#slcNuevoRegistroActividades").value = ""
   document.querySelector("#iNuevoRegistroTiempo").value = ""
   document.querySelector("#iNuevoRegistroFecha").value = ""
@@ -389,7 +392,7 @@ function btnNuevoRegistroHandler() {
           return
         }
         document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
-        cargarRegistrosEnPantalla()
+        cargarListaRegistros()
       }).catch((error) => {
         console.log(error)
       })
@@ -435,14 +438,24 @@ function eliminarRegistro() {
 }
 
 //Filtrar registros
-function filtrarRegistros() {
+function filtrarRegistrosEnActividades() {
   const periodo = document.querySelector("#rFiltroRegistros").value
+  
+  filtrarRegistrosPorPeriodo(periodo)
+  cargarRegistrosEnPantalla()
+}
+
+function filtrarRegistrosPorPeriodo(periodo){
   let fechaLimite = new Date()
 
   switch (periodo) {
     case "todo":
       sistema.registrosFiltrados = sistema.registros
       break
+    case "hoy":
+      sistema.registrosFiltrados = sistema.registros.filter(r => (
+        new Date(r.fecha + "T00:00") == fechaLimite
+      ))
     case "semana":
       fechaLimite.setDate(fechaLimite.getDate() - 7)
       sistema.registrosFiltrados = sistema.registros.filter(r => (
@@ -456,5 +469,22 @@ function filtrarRegistros() {
       ))
       break
   }
-  cargarRegistrosEnPantalla()
+}
+
+//Mostrar tiempo de entrenamiento
+function tiempos() {
+  tiempoTotal()
+  tiempoDelDia()
+}
+
+function tiempoTotal() {
+  const tiempoTotal = sistema.registros.reduce((total, r) => total + r.tiempo, 0)/60
+  document.querySelector('#tiempoTotal').innerHTML=`Tiempo total: ${tiempoTotal.toFixed(2)} hs`
+}
+
+function tiempoDelDia(){
+  filtrarRegistrosPorPeriodo('hoy')
+
+  const tiempoTotal = sistema.registrosFiltrados.reduce((total, r) => total + r.tiempo, 0)
+  document.querySelector('#tiempoDiario').innerHTML=`Tiempo total: ${tiempoTotal} minutos`
 }
