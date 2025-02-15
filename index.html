@@ -72,40 +72,79 @@
 
     <!-- Pagina principal -->
     <page-app class="ion-page" id="pageApp">
+
       <!-- Menu -->
       <ion-tabs id="tabMain">
 
-        <!-- Tab resumen -->
-        <ion-tab tab="tabResumen">
+        <!-- Tab tiempos -->
+        <ion-tab tab="tabTiempos">
+          <!-- Header -->
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="end">
+                <ion-button onclick="btnLogoutHandler()" fill="outline" size="small">
+                  <ion-icon name="log-out-outline"></ion-icon>
+                  Logout
+                </ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <!-- Content -->
           <ion-content class="ion-padding">
-            <ion-button onclick="btnLogoutHandler()" fill="outline" size="small">
-              <ion-icon name="log-out-outline"></ion-icon>
-              Logout
-            </ion-button>
-            <p id="pResumenMensaje"></p>
+            Tiempos
+            <p id="pTiemposMensaje"></p>
           </ion-content>
         </ion-tab>
 
-        <!-- Tab nuevo registro -->
-        <ion-tab tab="tabNuevoRegistro">
+        <!-- Tab actividades -->
+        <ion-tab tab="tabActividades">
+          <!-- Header -->
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="end">
+                <ion-button onclick="btnLogoutHandler()" fill="outline" size="small">
+                  <ion-icon name="log-out-outline"></ion-icon>
+                  Logout
+                </ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <!-- Content -->
           <ion-content class="ion-padding">
-            <h1>Agregar registro</h1>
-            <ion-select id="slcNuevoRegistroActividades" interface="modal" label="Actividad" label-placement="floating"
-              fill="outline">
-            </ion-select>
-            <ion-input id="iNuevoRegistroTiempo" type="number" label="Minutos" label-placement="floating" fill="outline"
-              placeholder="Minutos de la actividad"></ion-input>
-            <ion-input id="iNuevoRegistroFecha" type="date" label="Fecha" fill="outline"></ion-input>
 
-            <ion-button onclick="btnNuevoRegistroHandler()" expand="block">Agregar</ion-button>
-            <p id="pNuevoRegistroMensaje"></p>
+            <!-- Agregar actividad -->
+            <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+              <ion-fab-button onclick="limpiarModNuevoRegistro()" id="btnAbrirAgregarActividad" size="small">
+                <ion-icon name="add"></ion-icon>
+              </ion-fab-button>
+            </ion-fab>
 
-          </ion-content>
-        </ion-tab>
+            <ion-modal id="modAgregarActividad" trigger="btnAbrirAgregarActividad">
+              <ion-header>
+                <ion-toolbar>
+                  <ion-buttons slot="start">
+                    <ion-button onclick="cerrarModal()" shape="round" size="large"><ion-icon
+                        name="arrow-back-outline"></ion-icon></ion-button>
+                  </ion-buttons>
+                  <ion-title>Agregar actividad</ion-title>
+                </ion-toolbar>
+              </ion-header>
 
-        <!-- Tab lista de registros -->
-        <ion-tab tab="tabListaRegistros">
-          <ion-content class="ion-padding">
+              <ion-content class="ion-padding">
+                <ion-select id="slcNuevoRegistroActividades" interface="modal" label="Actividad"
+                  label-placement="floating" fill="outline">
+                </ion-select>
+                <ion-input id="iNuevoRegistroTiempo" type="number" label="Minutos" label-placement="floating"
+                  fill="outline" placeholder="Minutos de la actividad"></ion-input>
+                <ion-input id="iNuevoRegistroFecha" type="date" label="Fecha" fill="outline"></ion-input>
+
+                <ion-button onclick="btnNuevoRegistroHandler()" expand="block">Agregar</ion-button>
+                <p id="pNuevoRegistroMensaje"></p>
+
+              </ion-content>
+            </ion-modal>
+            <!-- Fin agregar actividad -->
+
             <h1>Lista de registros</h1>
             <p id="pListaRegistrosMensaje"></p>
 
@@ -132,6 +171,18 @@
 
         <!-- Tab mapa de usuarios -->
         <ion-tab tab="tabMapaUsuarios">
+          <!-- Header -->
+          <ion-header>
+            <ion-toolbar>
+              <ion-buttons slot="end">
+                <ion-button onclick="btnLogoutHandler()" fill="outline" size="small">
+                  <ion-icon name="log-out-outline"></ion-icon>
+                  Logout
+                </ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <!-- Content -->
           <ion-content class="ion-padding">
             Mapa de usuarios
           </ion-content>
@@ -140,22 +191,16 @@
         <!-- Botones -->
         <ion-tab-bar slot="bottom">
 
-          <!-- Resumen -->
-          <ion-tab-button tab="tabResumen">
-            <ion-icon name="stats-chart"></ion-icon>
-            Resumen
+          <!-- Tiempos -->
+          <ion-tab-button tab="tabTiempos">
+            <ion-icon name="timer"></ion-icon>
+            Tiempos
           </ion-tab-button>
 
-          <!-- Nuevo Registro -->
-          <ion-tab-button tab="tabNuevoRegistro">
-            <ion-icon name="add-circle"></ion-icon>
-            Registro
-          </ion-tab-button>
-
-          <!-- Lista registros -->
-          <ion-tab-button tab="tabListaRegistros">
-            <ion-icon name="time"></ion-icon>
-            Historial
+          <!-- Actividades -->
+          <ion-tab-button tab="tabActividades">
+            <ion-icon name="body"></ion-icon>
+            Actividades
           </ion-tab-button>
 
           <!-- Mapa usuarios -->

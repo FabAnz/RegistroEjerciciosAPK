@@ -11,6 +11,7 @@ const PANTALLA_LOGIN = document.querySelector("#pageLogin")
 const PANTALLA_REGISTRO_USUARIO = document.querySelector("#pageRegistroUsuario")
 const PANTALLA_PRINCIPAL = document.querySelector("#pageApp")
 const MENU_TAB = document.querySelector('#tabMain')
+const MODAL_AGREGAR_ACTIVIDAD = document.querySelector('#modAgregarActividad')
 
 // Inicializaci n del sistema
 inicializar()
@@ -76,13 +77,10 @@ function navegarTab(e) {
   const tab = e.detail.tab
 
   switch (tab) {
-    case "tabResumen":
+    case "tabTiempos":
 
       break;
-    case "tabNuevoRegistro":
-      limpiarTabNuevoRegistro()
-      break;
-    case "tabListaRegistros":
+    case "tabActividades":
       cargarListaRegistros()
       break;
     case "tabMapaUsuarios":
@@ -223,6 +221,11 @@ function cargarRegistrosEnPantalla() {
   btnListaRegistrosEliminarHandler()
 }
 
+function cerrarModal() {
+  MODAL_AGREGAR_ACTIVIDAD.dismiss()
+  document.querySelector('#pNuevoRegistroMensaje').innerHTML = ''//TODO borrar cuando funcione el toast
+}
+
 //Manejo UI
 function ocultarPantallas() {
   PANTALLA_HOME.style.display = "none"
@@ -251,10 +254,10 @@ function mostrarRegistroUsuario() {
 function mostrarPrincipal() {
   ocultarPantallas()
   PANTALLA_PRINCIPAL.style.display = "block"
-  MENU_TAB.select('tabListaRegistros')
+  MENU_TAB.select('tabActividades')
 }
 
-function limpiarTabNuevoRegistro() {
+function limpiarModNuevoRegistro() {
   document.querySelector("#slcNuevoRegistroActividades").value = ""
   document.querySelector("#iNuevoRegistroTiempo").value = ""
   document.querySelector("#iNuevoRegistroFecha").value = ""
@@ -389,7 +392,7 @@ function btnNuevoRegistroHandler() {
           return
         }
         document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
-        cargarRegistrosEnPantalla()
+        cargarListaRegistros()
       }).catch((error) => {
         console.log(error)
       })
