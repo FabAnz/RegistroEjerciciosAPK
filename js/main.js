@@ -26,7 +26,20 @@ function subscripcionAEventos() {
   // Routeo
   ROUTER.addEventListener("ionRouteDidChange", navegar)
   MENU_TAB.addEventListener("ionTabsWillChange", navegarTab)
-  document.querySelector("#rFiltroRegistros").addEventListener("ionChange", filtrarRegistrosEnActividades)
+
+  //Filtros
+  document.querySelectorAll(".pill").forEach(f => {
+    f.addEventListener("click", (e) => {
+      const periodo = e.target.getAttribute('value')
+      filtrarRegistrosEnActividades(periodo)
+
+      //Cambiar estilo
+      document.querySelectorAll('.pill-selected').forEach(ps => {
+        ps.classList.remove('pill-selected')
+      })
+      f.classList.add('pill-selected')
+    })
+  })
 }
 
 function verificarUsuarioLocalStorage() {
@@ -174,7 +187,12 @@ function cargarListaRegistros() {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
       }
       sistema.registros = data.registros.map(r => Registro.parse(r))
-      filtrarRegistrosEnActividades()
+      filtrarRegistrosEnActividades('todo')
+      if (data.registros.length > 0) {
+        document.querySelector('#pActividadesEspacioVacio').style.display = 'none'
+      } else {
+        document.querySelector('#pActividadesEspacioVacio').style.display = 'block'
+      }
     }).catch((error) => {
       console.log(error)
     })
@@ -445,9 +463,7 @@ function eliminarRegistro() {
 }
 
 //Filtrar registros
-function filtrarRegistrosEnActividades() {
-  const periodo = document.querySelector("#rFiltroRegistros").value
-
+function filtrarRegistrosEnActividades(periodo) {
   filtrarRegistrosPorPeriodo(periodo)
   cargarRegistrosEnPantalla()
 }
