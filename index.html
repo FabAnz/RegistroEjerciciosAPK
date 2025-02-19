@@ -166,12 +166,17 @@
               </ion-header>
 
               <ion-content class="ion-padding">
-                <ion-select id="slcNuevoRegistroActividades" interface="modal" label="Actividad"
-                  label-placement="floating" fill="outline">
-                </ion-select>
-                <ion-input id="iNuevoRegistroTiempo" type="number" label="Minutos" label-placement="floating"
-                  fill="outline" placeholder="Minutos de la actividad"></ion-input>
-                <ion-input id="iNuevoRegistroFecha" type="date" label="Fecha" fill="outline"></ion-input>
+                <ion-item>
+                  <ion-select id="slcNuevoRegistroActividades" label="Actividad" label-placement="floating">
+                  </ion-select>
+                </ion-item>
+                <ion-item>
+                  <ion-input id="iNuevoRegistroTiempo" type="number" label="Minutos" label-placement="floating"
+                    placeholder="Minutos de la actividad"></ion-input>
+                </ion-item>
+                <ion-item class="mb-60">
+                  <ion-input id="iNuevoRegistroFecha" type="date" label="Fecha"></ion-input>
+                </ion-item>
 
                 <ion-button onclick="btnNuevoRegistroHandler()" expand="block">Agregar</ion-button>
                 <p id="pNuevoRegistroMensaje"></p>
@@ -182,12 +187,16 @@
             <p id="pListaRegistrosMensaje"></p>
 
             <ion-label class="lbGris mb-3">Periodo</ion-label>
-            <ion-button value="todo" ripple-effect="false" size="small" shape="round" class="pill pill-selected">Todo</ion-button>
-            <ion-button value="semana" ripple-effect="false" size="small" shape="round" class="pill">Ultima semana</ion-button>
-            <ion-button value="mes" ripple-effect="false" size="small" shape="round" class="pill">Ultimo mes</ion-button>
+            <ion-button value="todo" ripple-effect="false" size="small" shape="round"
+              class="pill pill-selected">Todo</ion-button>
+            <ion-button value="semana" ripple-effect="false" size="small" shape="round" class="pill">Ultima
+              semana</ion-button>
+            <ion-button value="mes" ripple-effect="false" size="small" shape="round" class="pill">Ultimo
+              mes</ion-button>
 
-            <p id="pActividadesEspacioVacio" class="pEspacioVacio">No has registrado ninguna actividad. Crea un registro con el botón +.</p>
-            
+            <p id="pActividadesEspacioVacio" class="pEspacioVacio">No has registrado ninguna actividad. Crea un registro
+              con el botón +.</p>
+
             <div id="dListaRegistros"></div>
           </ion-content>
         </ion-tab>
