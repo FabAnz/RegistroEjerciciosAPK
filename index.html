@@ -114,11 +114,12 @@
           <ion-header>
             <ion-toolbar>
               <ion-buttons slot="end">
-                <ion-button onclick="btnLogoutHandler()" fill="outline" size="small">
-                  <ion-icon name="log-out-outline"></ion-icon>
-                  Logout
+                <ion-button onclick="btnLogoutHandler()" fill="clear">
+                  Salir
+                  <ion-icon slot="end" name="log-out-outline"></ion-icon>
                 </ion-button>
               </ion-buttons>
+              <ion-title>Mis tiempos</ion-title>
             </ion-toolbar>
           </ion-header>
           <!-- Content -->
@@ -161,25 +162,26 @@
                     <ion-button onclick="cerrarModal()" shape="round" size="large"><ion-icon
                         name="arrow-back-outline"></ion-icon></ion-button>
                   </ion-buttons>
-                  <ion-title>Agregar actividad</ion-title>
                 </ion-toolbar>
               </ion-header>
 
-              <ion-content class="ion-padding">
-                <ion-item>
-                  <ion-select id="slcNuevoRegistroActividades" label="Actividad" label-placement="floating">
-                  </ion-select>
-                </ion-item>
-                <ion-item>
-                  <ion-input id="iNuevoRegistroTiempo" type="number" label="Minutos" label-placement="floating"
-                    placeholder="Minutos de la actividad"></ion-input>
-                </ion-item>
-                <ion-item class="mb-60">
-                  <ion-input id="iNuevoRegistroFecha" type="date" label="Fecha"></ion-input>
-                </ion-item>
-
-                <ion-button onclick="btnNuevoRegistroHandler()" expand="block">Agregar</ion-button>
-                <p id="pNuevoRegistroMensaje"></p>
+              <ion-content>
+                <span class="titulo titulo-chico">agregar actividad</span>
+                <div class="ion-padding">
+                  <ion-item>
+                    <ion-select id="slcNuevoRegistroActividades" label="Actividad" label-placement="floating">
+                    </ion-select>
+                  </ion-item>
+                  <ion-item>
+                    <ion-input id="iNuevoRegistroTiempo" type="number" label="Minutos" label-placement="floating"
+                      placeholder="Minutos de la actividad"></ion-input>
+                  </ion-item>
+                  <ion-item class="mb-60">
+                    <ion-input id="iNuevoRegistroFecha" type="date" label="Fecha"></ion-input>
+                  </ion-item>
+                  <ion-button class="btn btn-negro" onclick="btnNuevoRegistroHandler()" expand="block">Agregar</ion-button>
+                  <p id="pNuevoRegistroMensaje"></p>
+                </div>
 
               </ion-content>
             </ion-modal>
