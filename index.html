@@ -124,9 +124,22 @@
           </ion-header>
           <!-- Content -->
           <ion-content class="ion-padding">
-            <h1>Tiempos</h1>
-            <h2 id="tiempoTotal"></h2>
-            <h2 id="tiempoDiario"></h2>
+            <div class="dTotalEntrenado mb-40">
+              <ion-grid>
+                <ion-row>
+                  <p>total entrenado</p>
+                </ion-row>
+                <ion-row class="ion-justify-content-end">
+                  <span id="tiempoTotal"></span>
+                </ion-row>
+              </ion-grid>
+            </div>
+            <div class="dEntrenamientoDeHoy mb-80">
+              <p>hoy entrenaste</p>
+              <span id="tiempoDiario"></span>
+            </div>
+            <ion-button class="btn-negro" onclick="abrirModal()" id="btnAbrirRegistrarEntrenamiento"
+              expand="block">Registrar actividad</ion-button>
             <p id="pTiemposMensaje"></p>
           </ion-content>
         </ion-tab>
@@ -150,7 +163,7 @@
 
             <!-- Agregar actividad -->
             <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-              <ion-fab-button onclick="limpiarModNuevoRegistro()" id="btnAbrirAgregarActividad">
+              <ion-fab-button onclick="abrirModal()" id="btnAbrirAgregarActividad">
                 <ion-icon name="add"></ion-icon>
               </ion-fab-button>
             </ion-fab>
@@ -166,7 +179,7 @@
               </ion-header>
 
               <ion-content>
-                <span class="titulo titulo-chico">agregar actividad</span>
+                <span class="titulo titulo-chico">registrar actividad</span>
                 <div class="ion-padding">
                   <ion-item>
                     <ion-select id="slcNuevoRegistroActividades" label="Actividad" label-placement="floating">
@@ -179,7 +192,8 @@
                   <ion-item class="mb-60">
                     <ion-input id="iNuevoRegistroFecha" type="date" label="Fecha"></ion-input>
                   </ion-item>
-                  <ion-button class="btn btn-negro" onclick="btnNuevoRegistroHandler()" expand="block">Agregar</ion-button>
+                  <ion-button class="btn btn-negro" onclick="btnNuevoRegistroHandler()"
+                    expand="block">Registrar</ion-button>
                   <p id="pNuevoRegistroMensaje"></p>
                 </div>
 
@@ -189,12 +203,14 @@
             <p id="pListaRegistrosMensaje"></p>
 
             <ion-label class="lbGris mb-3">Periodo</ion-label>
-            <ion-button value="todo" ripple-effect="false" size="small" shape="round"
-              class="pill pill-selected">Todo</ion-button>
-            <ion-button value="semana" ripple-effect="false" size="small" shape="round" class="pill">Ultima
-              semana</ion-button>
-            <ion-button value="mes" ripple-effect="false" size="small" shape="round" class="pill">Ultimo
-              mes</ion-button>
+            <div class="mb-3">
+              <ion-button value="todo" ripple-effect="false" size="small" shape="round"
+                class="pill pill-selected">Todo</ion-button>
+              <ion-button value="semana" ripple-effect="false" size="small" shape="round" class="pill">Ultima
+                semana</ion-button>
+              <ion-button value="mes" ripple-effect="false" size="small" shape="round" class="pill">Ultimo
+                mes</ion-button>
+            </div>
 
             <p id="pActividadesEspacioVacio" class="pEspacioVacio">No has registrado ninguna actividad. Crea un registro
               con el botón +.</p>
@@ -209,11 +225,12 @@
           <ion-header>
             <ion-toolbar>
               <ion-buttons slot="end">
-                <ion-button onclick="btnLogoutHandler()" fill="outline" size="small">
-                  <ion-icon name="log-out-outline"></ion-icon>
-                  Logout
+                <ion-button onclick="btnLogoutHandler()" fill="clear">
+                  Salir
+                  <ion-icon slot="end" name="log-out-outline"></ion-icon>
                 </ion-button>
               </ion-buttons>
+              <ion-title>Mapa de usuarios</ion-title>
             </ion-toolbar>
           </ion-header>
           <!-- Content -->

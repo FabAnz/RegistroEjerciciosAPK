@@ -240,6 +240,11 @@ function cargarRegistrosEnPantalla() {
   btnListaRegistrosEliminarHandler()
 }
 
+function abrirModal(){
+  limpiarModNuevoRegistro()
+  MODAL_AGREGAR_ACTIVIDAD.present()
+}
+
 function cerrarModal() {
   MODAL_AGREGAR_ACTIVIDAD.dismiss()
   document.querySelector('#pNuevoRegistroMensaje').innerHTML = ''//TODO borrar cuando funcione el toast
@@ -506,12 +511,12 @@ function tiempos() {
 
 function tiempoTotal() {
   const tiempoTotal = sistema.registros.reduce((total, r) => total + r.tiempo, 0) / 60
-  document.querySelector('#tiempoTotal').innerHTML = `Haz entrenado ${tiempoTotal.toFixed(2)} hs`
+  document.querySelector('#tiempoTotal').innerHTML = `${tiempoTotal.toFixed(2)} hs`
 }
 
 function tiempoDelDia() {
   filtrarRegistrosPorPeriodo('hoy')
 
   const tiempoTotal = sistema.registrosFiltrados.reduce((total, r) => total + r.tiempo, 0)
-  document.querySelector('#tiempoDiario').innerHTML = `Hoy entrenaste ${tiempoTotal} minutos`
+  document.querySelector('#tiempoDiario').innerHTML = `${tiempoTotal} min`
 }
