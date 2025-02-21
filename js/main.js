@@ -1,6 +1,7 @@
-//Constantes
+//Globales
 const API_URL = "https://movetrack.develotion.com/"
 const API_IMAGENES = "https://movetrack.develotion.com/imgs/"
+let map = null
 
 //DOM
 const ROUTER = document.querySelector("#ruteo")
@@ -25,7 +26,7 @@ function inicializar() {
 function subscripcionAEventos() {
   // Routeo
   ROUTER.addEventListener("ionRouteDidChange", navegar)
-  MENU_TAB.addEventListener("ionTabsWillChange", navegarTab)
+  MENU_TAB.addEventListener("ionTabsDidChange", navegarTab)
 
   //Filtros
   document.querySelectorAll(".pill").forEach(f => {
@@ -89,7 +90,6 @@ function verificarInicio() {
 
 function navegarTab(e) {
   const tab = e.detail.tab
-
   switch (tab) {
     case "tabTiempos":
       tiempos()
@@ -98,7 +98,11 @@ function navegarTab(e) {
       cargarListaRegistros()
       break;
     case "tabMapaUsuarios":
-
+      if (!map) {
+        cargarMapa()
+      } else {
+        cargarCantidadDeUsuariosPorPais()
+      }
       break;
   }
 }
@@ -240,11 +244,12 @@ function cargarRegistrosEnPantalla() {
   btnListaRegistrosEliminarHandler()
 }
 
-function abrirModal(){
+function abrirModal() {
   limpiarModNuevoRegistro()
   MODAL_AGREGAR_ACTIVIDAD.present()
 }
 
+//TODO Arreglar la carga de tiempo cuando se cierra el modal
 function cerrarModal() {
   MODAL_AGREGAR_ACTIVIDAD.dismiss()
   document.querySelector('#pNuevoRegistroMensaje').innerHTML = ''//TODO borrar cuando funcione el toast
@@ -519,4 +524,57 @@ function tiempoDelDia() {
 
   const tiempoTotal = sistema.registrosFiltrados.reduce((total, r) => total + r.tiempo, 0)
   document.querySelector('#tiempoDiario').innerHTML = `${tiempoTotal} min`
+}
+
+//Mapa
+function cargarMapa() {
+  setTimeout(() => {
+    map = L.map('miMapa')
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
+
+    let coordenadas = sistema.paises.map(p => {
+      p.marker = L.marker([p.latitude, p.longitude]).addTo(map).bindPopup("Prueba").bindTooltip(p.name, {
+        permanent: true,
+        direction: "bottom",
+        offset: [-15, 30] // Ajusta la posición del texto respecto al marcador
+      })
+      return [p.latitude, p.longitude]
+    })
+
+    if (coordenadas.length > 0) {
+      map.fitBounds(coordenadas)
+      cargarCantidadDeUsuariosPorPais()
+    } else {
+      map.setView([-34.90376119736271, -56.19063145518495], 18)
+    }
+  }, 100)
+}
+
+function cargarCantidadDeUsuariosPorPais() {
+  console.log("oña")
+  fetch(`${API_URL}usuariosPorPais.php`, {
+    headers: {
+      "apikey": sistema.usuarioActivo.apiKey,
+      "iduser": sistema.usuarioActivo.id
+    }
+  })
+    .then((response) => {
+      if (response.status != 200)
+        //TODO en caso de que se use la carga de paises en otro lado, modificar como se muestra el error, tal vez hacerlo en un alert global
+        document.querySelector("#pNuevoRegistroMensaje").innerHTML = "Error en el servidor, no se pueden cargar las actividades"
+      return response.json()
+    }).then((data) => {
+      if (data.codigo == 401) {
+        btnLogoutHandler()
+        return
+      }
+      //Actualiza los markers con los usuarios por pais
+      sistema.paises.forEach(p => {
+        const pais = data.paises.find(pData => pData.id == p.id)
+        p.marker.setTooltipContent(`${p.name}<br>${pais.cantidadDeUsuarios} usuarios`)
+      })
+
+    }).catch((error) => {
+      console.log(error)
+    })
 }

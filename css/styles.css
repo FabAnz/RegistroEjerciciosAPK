@@ -72,11 +72,6 @@ p {
   --border-radius: 0;
 }
 
-.btn-negro {
-  --background: var(--color-naranja-1);
-  --border-radius: 0;
-}
-
 /* Titulos */
 .titulo {
   display: inline-block;
@@ -191,4 +186,9 @@ p {
 
 .dEntrenamientoDeHoy p {
   text-align: end;
+}
+
+/* Mapa */
+#miMapa{
+  height: 100%;
 }

@@ -14,6 +14,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
     rel="stylesheet">
+  <!-- Mapa -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <!-- CSS -->
   <link rel="stylesheet" href="./css/styles.css">
 </head>
@@ -220,7 +225,7 @@
         </ion-tab>
 
         <!-- Tab mapa de usuarios -->
-        <ion-tab tab="tabMapaUsuarios">
+        <ion-tab tab="tabMapaUsuarios" id="tabMapaUsuarios">
           <!-- Header -->
           <ion-header>
             <ion-toolbar>
@@ -234,8 +239,8 @@
             </ion-toolbar>
           </ion-header>
           <!-- Content -->
-          <ion-content class="ion-padding">
-            Mapa de usuarios
+          <ion-content>
+            <div id="miMapa"></div>
           </ion-content>
         </ion-tab>
 
@@ -244,19 +249,19 @@
 
           <!-- Tiempos -->
           <ion-tab-button tab="tabTiempos">
-            <ion-icon name="timer"></ion-icon>
+            <ion-icon name="timer" size="large"></ion-icon>
             Tiempos
           </ion-tab-button>
 
           <!-- Actividades -->
           <ion-tab-button tab="tabActividades">
-            <ion-icon name="body"></ion-icon>
+            <ion-icon name="body" size="large"></ion-icon>
             Actividades
           </ion-tab-button>
 
           <!-- Mapa usuarios -->
           <ion-tab-button tab="tabMapaUsuarios">
-            <ion-icon name="navigate-circle"></ion-icon>
+            <ion-icon name="navigate-circle" size="large"></ion-icon>
             Mapa usuarios
           </ion-tab-button>
 
