@@ -20,6 +20,7 @@ class Pais {
   currency
   latitude
   longitude
+  marker
 
   static parse(data) {
     const pais = new Pais()
@@ -33,6 +34,8 @@ class Pais {
       pais.latitude = data.latitude
     if (data.longitude)
       pais.longitude = data.longitude
+    if (data.marker)
+      pais.marker = data.marker
     return pais
   }
 }

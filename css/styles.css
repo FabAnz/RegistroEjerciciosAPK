@@ -9,6 +9,8 @@
   /* Textos */
   --fs-12: 12px;
   --fs-16: 16px;
+  --fs-20: 20px;
+  --fs-24: 24px;
   --fs-32: 32px;
   --fs-48: 48px;
 }
@@ -49,7 +51,11 @@ p {
 }
 
 .mb-3 {
-  margin-bottom: 16px;
+  margin-bottom: 16px !important;
+}
+
+.mb-40 {
+  margin-bottom: 40px;
 }
 
 .mb-60 {
@@ -123,11 +129,11 @@ p {
   --background: var(--color-negro-1);
 }
 
-.pill-selected{
+.pill-selected {
   --background: var(--color-naranja-1);
 }
 
-.pEspacioVacio{
+.pEspacioVacio {
   display: none;
   font-size: var(--fs-16);
   color: var(--color-negro-1);
@@ -135,4 +141,54 @@ p {
   border: 1px dotted var(--color-negro-1);
   border-radius: 4px;
   margin-top: 160px;
+}
+
+/* Tiempos */
+.dTotalEntrenado,
+.dEntrenamientoDeHoy {
+  background-color: var(--color-negro-3);
+  color: var(--color-blanco-1);
+  padding-top: 16px;
+}
+
+.dTotalEntrenado ion-grid,
+.dEntrenamientoDeHoy ion-grid {
+  --ion-grid-padding: 0;
+}
+
+.dTotalEntrenado p,
+.dEntrenamientoDeHoy p {
+  margin: 0;
+  margin-bottom: 24px;
+  font-weight: bold;
+  font-size: var(--fs-20);
+}
+
+.dTotalEntrenado span,
+.dEntrenamientoDeHoy span {
+  display: inline-block;
+  background-color: var(--color-naranja-1);
+  color: var(--color-negro-3);
+  padding: 16px;
+  font-weight: bold;
+  font-size: var(--fs-32);
+
+}
+
+.dTotalEntrenado {
+  margin-top: 48px;
+  padding-left: 16px;
+}
+
+.dEntrenamientoDeHoy {
+  padding-right: 16px;
+}
+
+.dEntrenamientoDeHoy p {
+  text-align: end;
+}
+
+/* Mapa */
+#miMapa{
+  height: 100%;
 }
