@@ -83,8 +83,10 @@ function navegar(e) {
 function verificarInicio() {
   if (sistema.usuarioActivo) {
     NAV.setRoot("page-app")
+    NAV.push("page-app")
   } else {
     NAV.setRoot("page-login")
+    NAV.push("page-login")
   }
 }
 
@@ -191,7 +193,9 @@ function cargarListaRegistros() {
         document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
       }
       sistema.registros = data.registros.map(r => Registro.parse(r))
-      filtrarRegistrosEnActividades('todo')
+
+      const periodo = document.querySelector(".pill-selected").getAttribute("value")
+      filtrarRegistrosEnActividades(periodo)
       if (data.registros.length > 0) {
         document.querySelector('#pActividadesEspacioVacio').style.display = 'none'
       } else {
@@ -249,9 +253,9 @@ function abrirModal() {
   MODAL_AGREGAR_ACTIVIDAD.present()
 }
 
-//TODO Arreglar la carga de tiempo cuando se cierra el modal
 function cerrarModal() {
   MODAL_AGREGAR_ACTIVIDAD.dismiss()
+  tiempos()
   document.querySelector('#pNuevoRegistroMensaje').innerHTML = ''//TODO borrar cuando funcione el toast
 }
 
@@ -547,11 +551,10 @@ function cargarMapa() {
     } else {
       map.setView([-34.90376119736271, -56.19063145518495], 18)
     }
-  }, 100)
+  }, 500)
 }
 
 function cargarCantidadDeUsuariosPorPais() {
-  console.log("oña")
   fetch(`${API_URL}usuariosPorPais.php`, {
     headers: {
       "apikey": sistema.usuarioActivo.apiKey,

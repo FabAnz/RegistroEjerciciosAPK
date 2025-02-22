@@ -64,7 +64,7 @@
               placeholder="Ingrese su contraseña"></ion-input>
           </ion-item>
           <ion-button class="btn-negro mb-3" onclick="btnLoginIngresarHandler()" expand="block">Ingresar</ion-button>
-          <p>¿Aún no tenes cuenta? <ion-router-link href="/registroUsuario">Registrate aquí</ion-router-link></p>
+          <p>¿Aún no tenes cuenta? <ion-router-link href="/registroUsuario" router-direction="forward">Registrate aquí</ion-router-link></p>
           <p id="pLoginMensaje"></p>
         </div>
       </ion-content>
@@ -73,15 +73,16 @@
 
     <!-- Pagina Registro Usuario -->
     <page-registroUsuario class="ion-page" id="pageRegistroUsuario">
-
+      <!-- Header -->
       <ion-header>
         <ion-toolbar>
           <ion-buttons slot="start">
-            <ion-back-button default-href="/"></ion-back-button>
+            <ion-back-button default-href="/login"></ion-back-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
 
+      <!-- Content -->
       <ion-content>
         <span class="titulo titulo-chico">registro</span>
 
@@ -143,7 +144,7 @@
               <p>hoy entrenaste</p>
               <span id="tiempoDiario"></span>
             </div>
-            <ion-button class="btn-negro" onclick="abrirModal()" id="btnAbrirRegistrarEntrenamiento"
+            <ion-button class="btn-naranja" onclick="abrirModal()" id="btnAbrirRegistrarEntrenamiento"
               expand="block">Registrar actividad</ion-button>
             <p id="pTiemposMensaje"></p>
           </ion-content>
