@@ -113,8 +113,7 @@ function cargarPaises() {
   return fetch(`${API_URL}paises.php`)
     .then((response) => {
       if (response.status != 200)
-        //TODO en caso de que se use la carga de paises en otro lado, modificar como se muestra el error, tal vez hacerlo en un alert global
-        document.querySelector("#pRegistroUsuarioPais").innerHTML = "Error en el servidor, no se pueden cargar los paises"
+        mostrarToast('ERROR', '', 'Hubo un error, vuelva a intentar más tarde')
       return response.json()
     }).then((data) => {
       sistema.paises = data.paises.map(p => Pais.parse(p))
@@ -143,8 +142,7 @@ function cargarActividades() {
     })
     .then((response) => {
       if (response.status != 200)
-        //TODO en caso de que se use la carga de paises en otro lado, modificar como se muestra el error, tal vez hacerlo en un alert global
-        document.querySelector("#pNuevoRegistroMensaje").innerHTML = "Error en el servidor, no se pueden cargar las actividades"
+        mostrarToast('ERROR', '', 'Hubo un error, vuelva a intentar más tarde')
       return response.json()
     }).then((data) => {
       if (data.codigo == 401) {
@@ -152,7 +150,8 @@ function cargarActividades() {
         return
       }
       if (data.mensaje) {
-        document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
+        mostrarToast('ERROR', '', data.mensaje)
+
       }
       sistema.actividades = data.actividades.map(a => Actividad.parse(a))
       cargarActividadesEnSelect()
@@ -169,7 +168,6 @@ function cargarActividadesEnSelect() {
 }
 
 function cargarListaRegistros() {
-  document.querySelector("#pListaRegistrosMensaje").innerHTML = ""
   fetch(`${API_URL}registros.php?idUsuario=${sistema.usuarioActivo.id}`,
     {
       headers: {
@@ -179,8 +177,8 @@ function cargarListaRegistros() {
     })
     .then((response) => {
       if (response.status != 200)
-        //TODO en caso de que se use la carga de paises en otro lado, modificar como se muestra el error, tal vez hacerlo en un alert global
-        document.querySelector("#pListaRegistrosMensaje").innerHTML = "Error en el servidor, no se pueden cargar las actividades"
+        mostrarToast('ERROR', '', 'Hubo un error, vuelva a intentar más tarde')
+
       return response.json()
     }).then((data) => {
       if (data.codigo == 401) {
@@ -188,7 +186,8 @@ function cargarListaRegistros() {
         return
       }
       if (data.mensaje) {
-        document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
+        mostrarToast('ERROR', '', data.mensaje)
+
       }
       sistema.registros = data.registros.map(r => Registro.parse(r))
 
@@ -254,7 +253,6 @@ function abrirModal() {
 function cerrarModal() {
   MODAL_AGREGAR_ACTIVIDAD.dismiss()
   tiempos()
-  document.querySelector('#pNuevoRegistroMensaje').innerHTML = ''//TODO borrar cuando funcione el toast
 }
 
 //Manejo UI
@@ -275,7 +273,6 @@ function mostrarLogin() {
   ocultarPantallas()
   document.querySelector("#iLoginUsuario").value = ''
   document.querySelector("#iLoginPassword").value = ''
-  document.querySelector('#pLoginMensaje').innerHTML = ''
   PANTALLA_LOGIN.style.display = "block"
 }
 
@@ -284,7 +281,6 @@ function mostrarRegistroUsuario() {
   document.querySelector("#iRegistroUsuarioUsuario").value = ''
   document.querySelector("#iRegistroUsuarioPassword").value = ''
   document.querySelector("#slcRegistroUsuarioPais").value = ''
-  document.querySelector('#pRegistroUsuarioMensaje').innerHTML = ''
   PANTALLA_REGISTRO_USUARIO.style.display = "block"
 }
 
@@ -298,7 +294,6 @@ function limpiarModNuevoRegistro() {
   document.querySelector("#slcNuevoRegistroActividades").value = ""
   document.querySelector("#iNuevoRegistroTiempo").value = ""
   document.querySelector("#iNuevoRegistroFecha").value = ""
-  document.querySelector("#pNuevoRegistroMensaje").innerHTML = ""
 }
 
 //Login
@@ -311,8 +306,6 @@ function btnLoginIngresarHandler() {
     password: password
   }
 
-  document.querySelector("#pLoginMensaje").innerHTML = ''
-
   try {
     if (!usuario || !password)
       throw new Error("Se deben completar todos los datos")
@@ -320,11 +313,11 @@ function btnLoginIngresarHandler() {
     fetch(`${API_URL}login.php`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(usuarioBody) })
       .then((response) => {
         if (response.status != 200)
-          document.querySelector("#pRegistroUsuarioMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
+          mostrarToast('ERROR', '', 'Hubo un error, vuelva a intentar más tarde')
         return response.json()
       }).then((data) => {
         if (data.mensaje) {
-          document.querySelector("#pLoginMensaje").innerHTML = data.mensaje
+          mostrarToast('ERROR', '', data.mensaje)
         } else {
           NAV.setRoot('page-app')
           sistema.usuarioActivo = data
@@ -335,7 +328,7 @@ function btnLoginIngresarHandler() {
       })
 
   } catch (error) {
-    document.querySelector("#pLoginMensaje").innerHTML = error
+    mostrarToast('ERROR', '', error.message)
   }
 }
 
@@ -359,25 +352,28 @@ function btnRegistroUsuarioRegistrarmeHandler() {
     idPais: idPais
   }
 
-  document.querySelector("#pLoginMensaje").innerHTML = ''
-  document.querySelector("#pRegistroUsuarioMensaje").innerHTML = ""
-
   try {
+    //Validaciones
     if (!usuario || !password || !idPais)
       throw new Error("Se deben completar todos los datos")
+    if (password.length < 8)
+      throw new Error("La contraseña debe tener al menos 8 caracteres")
+    if (!(sistema.paises.find(p => p.id == idPais)))
+      throw new Error("El país ingresado no es valido")
 
     fetch(`${API_URL}usuarios.php`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(nuevoUsuario) })
       .then((response) => {
         if (response.status != 200)
-          document.querySelector("#pRegistroUsuarioMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
+          mostrarToast('ERROR', '', 'Hubo un error, vuelva a intentar más tarde')
+
         return response.json()
       }).then((data) => {
         if (data.mensaje) {
-          document.querySelector("#pRegistroUsuarioMensaje").innerHTML = data.mensaje
+          mostrarToast('ERROR', '', data.mensaje)
         } else {
-          document.querySelector("#pLoginMensaje").innerHTML = `Gracias por registrarte, ahora inicia sesión para ingresar`
-          NAV.popToRoot()
-          mostrarLogin()
+          NAV.setRoot('page-app')
+          sistema.usuarioActivo = data
+          localStorage.setItem('OBDesAPKUsuarioActivo', JSON.stringify(data))
         }
       }).catch((error) => {
         console.log(error)
@@ -385,7 +381,7 @@ function btnRegistroUsuarioRegistrarmeHandler() {
 
 
   } catch (error) {
-    document.querySelector("#pRegistroUsuarioMensaje").innerHTML = error
+    mostrarToast('ERROR', '', error.message)
   }
 }
 
@@ -405,10 +401,15 @@ function btnNuevoRegistroHandler() {
   const fechaHoy = new Date()
   const fechaIngresada = new Date(fecha + "T00:00")
   try {
+    //Validaciones
     if (!idActividad || !tiempo || !fecha)
       throw new Error("Se deben completar todos los datos")
+    if (!(tiempo > 0))
+      throw new Error("El tiempo debe ser mayor a 0 minutos")
     if (fechaIngresada > fechaHoy)
       throw new Error("La fecha no puede ser posterior a hoy")
+    if (!(sistema.actividades.find(a => a.id == idActividad)))
+      throw new Error("La actividad ingresada no es valida")
 
     fetch(`${API_URL}registros.php`, {
       method: "POST",
@@ -421,14 +422,14 @@ function btnNuevoRegistroHandler() {
     })
       .then((response) => {
         if (response.status != 200)
-          document.querySelector("#pNuevoRegistroMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
+          mostrarToast("ERROR", "", "Hubo un error, vuelva a intentar más tarde")
         return response.json()
       }).then((data) => {
         if (data.codigo == 401) {
           btnLogoutHandler()
           return
         }
-        document.querySelector("#pNuevoRegistroMensaje").innerHTML = data.mensaje
+        mostrarToast("SUCCESS", "", data.mensaje)
         cargarListaRegistros()
       }).catch((error) => {
         console.log(error)
@@ -436,7 +437,7 @@ function btnNuevoRegistroHandler() {
 
 
   } catch (error) {
-    document.querySelector("#pNuevoRegistroMensaje").innerHTML = error
+    mostrarToast("ERROR", "", error.message)
   }
 }
 
@@ -459,15 +460,14 @@ function eliminarRegistro() {
   })
     .then((response) => {
       if (response.status != 200)
-        //TODO Cambiar todos los p de mensaje por un toast
-        document.querySelector("#pListaRegistrosMensaje").innerHTML = "Hubo un error, vuelva a intentar más tarde"
+        mostrarToast("ERROR", "", "Hubo un error, vuelva a intentar más tarde")
       return response.json()
     }).then((data) => {
       if (data.codigo == 401) {
         btnLogoutHandler()
         return
       }
-      document.querySelector("#pListaRegistrosMensaje").innerHTML = data.mensaje
+      mostrarToast("SUCCESS", "", data.mensaje)
       cargarListaRegistros()
     }).catch((error) => {
       console.log(error)
@@ -561,8 +561,7 @@ function cargarCantidadDeUsuariosPorPais() {
   })
     .then((response) => {
       if (response.status != 200)
-        //TODO en caso de que se use la carga de paises en otro lado, modificar como se muestra el error, tal vez hacerlo en un alert global
-        document.querySelector("#pNuevoRegistroMensaje").innerHTML = "Error en el servidor, no se pueden cargar las actividades"
+        mostrarToast('ERROR', 'Error', 'Error en el servidor, no se pueden cargar las actividades')
       return response.json()
     }).then((data) => {
       if (data.codigo == 401) {
@@ -578,4 +577,23 @@ function cargarCantidadDeUsuariosPorPais() {
     }).catch((error) => {
       console.log(error)
     })
+}
+
+/* Mensajes */
+async function mostrarToast(tipo, titulo, mensaje) {
+  const toast = document.createElement('ion-toast');
+  toast.header = titulo;
+  toast.message = mensaje;
+  toast.position = 'bottom';
+  toast.duration = 2000;
+  if (tipo === "ERROR") {
+    toast.color = "danger";
+  } else if (tipo === "SUCCESS") {
+    toast.color = "success";
+  } else if (tipo === "WARNING") {
+    toast.color = "warning";
+  }
+
+  document.body.appendChild(toast);
+  return toast.present();
 }
