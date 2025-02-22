@@ -1,7 +1,10 @@
 class Sistema {
   static s_instancia
-  usuarioActivo
+  usuarioActivo = null
   paises
+  actividades
+  registros
+  registrosFiltrados
 
   static getInstancia() {
     if (!this.s_instancia) this.s_instancia = new Sistema()
@@ -17,6 +20,7 @@ class Pais {
   currency
   latitude
   longitude
+  marker
 
   static parse(data) {
     const pais = new Pais()
@@ -30,6 +34,45 @@ class Pais {
       pais.latitude = data.latitude
     if (data.longitude)
       pais.longitude = data.longitude
+    if (data.marker)
+      pais.marker = data.marker
     return pais
+  }
+}
+
+class Actividad {
+  id
+  nombre
+  imagen
+
+  static parse(data) {
+    const actividad = new Actividad()
+    if (data.id)
+      actividad.id = data.id
+    if (data.nombre)
+      actividad.nombre = data.nombre
+    if (data.imagen)
+      actividad.imagen = data.imagen
+    return actividad
+  }
+
+
+}
+
+class Registro {
+  id
+  idActividad
+  idUsuario
+  tiempo
+  fecha
+
+  static parse(data) {
+    const registro = new Registro()
+    if (data.id) registro.id = data.id
+    if (data.idActividad) registro.idActividad = data.idActividad
+    if (data.idUsuario) registro.idUsuario = data.idUsuario
+    if (data.tiempo) registro.tiempo = data.tiempo
+    if (data.fecha) registro.fecha = data.fecha
+    return registro
   }
 }
