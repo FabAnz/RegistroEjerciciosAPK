@@ -83,10 +83,8 @@ function navegar(e) {
 function verificarInicio() {
   if (sistema.usuarioActivo) {
     NAV.setRoot("page-app")
-    NAV.push("page-app")
   } else {
     NAV.setRoot("page-login")
-    NAV.push("page-login")
   }
 }
 
