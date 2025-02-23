@@ -21,7 +21,7 @@ inicializar()
 
 function inicializar() {
   subscripcionAEventos()
-  verificarUsuarioLocalStorage()
+  sistema.verificarUsuarioLocalStorage()
 }
 
 function subscripcionAEventos() {
@@ -43,13 +43,6 @@ function subscripcionAEventos() {
     })
   })
 }
-
-function verificarUsuarioLocalStorage() {
-  const usuarioRecuperado = localStorage.getItem("OBDesAPKUsuarioActivo")
-  if (usuarioRecuperado)
-    sistema.usuarioActivo = JSON.parse(usuarioRecuperado)
-}
-
 
 //Navegacion
 function navegar(e) {
@@ -426,6 +419,9 @@ function btnNuevoRegistroHandler() {
           btnLogoutHandler()
           return
         }
+        document.querySelector("#slcNuevoRegistroActividades").value = ""
+        document.querySelector("#iNuevoRegistroTiempo").value = ""
+        document.querySelector("#iNuevoRegistroFecha").value = ""
         mostrarToast("SUCCESS", "", data.mensaje)
         cargarListaRegistros()
       }).catch((error) => {
@@ -473,56 +469,14 @@ function eliminarRegistro() {
 
 //Filtrar registros
 function filtrarRegistrosEnActividades(periodo) {
-  filtrarRegistrosPorPeriodo(periodo)
+  sistema.filtrarRegistrosPorPeriodo(periodo)
   cargarRegistrosEnPantalla()
-}
-
-function filtrarRegistrosPorPeriodo(periodo) {
-  let fechaLimite = new Date()
-
-  switch (periodo) {
-    case "todo":
-      sistema.registrosFiltrados = sistema.registros
-      break
-    case "hoy":
-      fechaLimite.setHours(0, 0, 0, 0) // Elimina horas, minutos, segundos y milisegundos
-      sistema.registrosFiltrados = sistema.registros.filter(r => {
-        let fechaRegistro = new Date(r.fecha + "T00:00")
-        fechaRegistro.setHours(0, 0, 0, 0)
-        return fechaRegistro.getTime() == fechaLimite.getTime()
-      })
-      break
-    case "semana":
-      fechaLimite.setDate(fechaLimite.getDate() - 7)
-      sistema.registrosFiltrados = sistema.registros.filter(r => (
-        new Date(r.fecha + "T00:00") >= fechaLimite
-      ))
-      break
-    case "mes":
-      fechaLimite.setMonth(fechaLimite.getMonth() - 1)
-      sistema.registrosFiltrados = sistema.registros.filter(r => (
-        new Date(r.fecha + "T00:00") >= fechaLimite
-      ))
-      break
-  }
 }
 
 //Mostrar tiempo de entrenamiento
 function tiempos() {
-  tiempoTotal()
-  tiempoDelDia()
-}
-
-function tiempoTotal() {
-  const tiempoTotal = sistema.registros.reduce((total, r) => total + r.tiempo, 0) / 60
-  document.querySelector('#tiempoTotal').innerHTML = `${tiempoTotal.toFixed(2)} hs`
-}
-
-function tiempoDelDia() {
-  filtrarRegistrosPorPeriodo('hoy')
-
-  const tiempoTotal = sistema.registrosFiltrados.reduce((total, r) => total + r.tiempo, 0)
-  document.querySelector('#tiempoDiario').innerHTML = `${tiempoTotal} min`
+  document.querySelector('#tiempoTotal').innerHTML = `${sistema.tiempoTotal().toFixed(2)} hs`
+  document.querySelector('#tiempoDiario').innerHTML = `${sistema.tiempoDelDia()} min`
 }
 
 //Mapa
