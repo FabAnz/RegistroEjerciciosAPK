@@ -14,6 +14,7 @@ const PANTALLA_REGISTRO_USUARIO = document.querySelector("#pageRegistroUsuario")
 const PANTALLA_PRINCIPAL = document.querySelector("#pageApp")
 const MENU_TAB = document.querySelector('#tabMain')
 const MODAL_AGREGAR_ACTIVIDAD = document.querySelector('#modAgregarActividad')
+const MAPA = document.querySelector("#miMapa")
 
 // Inicializaci n del sistema
 inicializar()
@@ -98,11 +99,7 @@ function navegarTab(e) {
       cargarListaRegistros()
       break;
     case "tabMapaUsuarios":
-      if (!map) {
-        cargarMapa()
-      } else {
-        cargarCantidadDeUsuariosPorPais()
-      }
+      cargarMapa()
       break;
   }
 }
@@ -530,26 +527,41 @@ function tiempoDelDia() {
 
 //Mapa
 function cargarMapa() {
-  setTimeout(() => {
+  //Se ejecuta hasta que el div este dibujado
+  if (MAPA.offsetHeight == 0 || MAPA.offsetWidth == 0) {
+    setTimeout(() => {
+      cargarMapa()
+    }, 100)
+    return
+  }
+
+  if (!map)
     map = L.map('miMapa')
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
 
-    let coordenadas = sistema.paises.map(p => {
-      p.marker = L.marker([p.latitude, p.longitude]).addTo(map).bindPopup("Prueba").bindTooltip(p.name, {
-        permanent: true,
-        direction: "bottom",
-        offset: [-15, 30] // Ajusta la posición del texto respecto al marcador
-      })
-      return [p.latitude, p.longitude]
-    })
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
 
-    if (coordenadas.length > 0) {
-      map.fitBounds(coordenadas)
-      cargarCantidadDeUsuariosPorPais()
+  let coordenadas = sistema.paises.map(p => {
+    if (p.marker) {
+      p.marker.closeTooltip()
     } else {
-      map.setView([-34.90376119736271, -56.19063145518495], 18)
+      p.marker = L.marker([p.latitude, p.longitude]).addTo(map)
     }
-  }, 500)
+    p.marker.bindTooltip(p.name, {
+      permanent: true,
+      direction: "bottom",
+      offset: [-15, 30] // Ajusta la posición del texto respecto al marcador
+    })
+    return [p.latitude, p.longitude]
+  })
+
+  map.invalidateSize()
+
+  if (coordenadas.length > 0) {
+    map.fitBounds(coordenadas)
+    cargarCantidadDeUsuariosPorPais()
+  } else {
+    map.setView([-34.90376119736271, -56.19063145518495], 18)
+  }
 }
 
 function cargarCantidadDeUsuariosPorPais() {
